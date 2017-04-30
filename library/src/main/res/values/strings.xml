@@ -1,0 +1,4 @@
+<resources>
+    <string name="app_name">RecyclerFragment</string>
+    <string name="empty_list">No element</string>
+</resources>
