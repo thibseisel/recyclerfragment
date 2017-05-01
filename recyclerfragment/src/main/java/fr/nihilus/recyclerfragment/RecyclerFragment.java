@@ -1,6 +1,7 @@
 package fr.nihilus.recyclerfragment;
 
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.ContentLoadingProgressBar;
 import android.support.v7.widget.RecyclerView;
@@ -9,6 +10,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import static android.support.v7.widget.RecyclerView.Adapter;
 import static android.support.v7.widget.RecyclerView.ViewHolder;
@@ -39,9 +41,9 @@ public class RecyclerFragment extends Fragment {
     private RecyclerView.LayoutManager mManager;
     private View mEmptyView;
 
-    private boolean mIsShown;
-
-    /** Listens for changes in adapter to show the empty view when adapter is empty. */
+    /**
+     * Listens for changes in adapter to show the empty view when adapter is empty.
+     */
     private final AdapterDataObserver mEmptyStateObserver = new AdapterDataObserver() {
         @Override
         public void onChanged() {
@@ -49,11 +51,22 @@ public class RecyclerFragment extends Fragment {
             RecyclerFragment.this.setEmptyShown(hasEmptyState());
         }
     };
+    private boolean mIsShown;
 
     public RecyclerFragment() {
         // Required empty constructor
     }
 
+    /**
+     * <p>Called to have this RecyclerFragment instanciate its view hierarchy.</p>
+     * <p>The default implementation creates a layout containing a {@link RecyclerView},
+     * a {@link ContentLoadingProgressBar} and a {@link TextView} with a simple empty text.
+     * You can override this method to define your own view hierarchy for this fragment.
+     * </p>
+     *
+     * @return the view for this fragment UI
+     */
+    @NonNull
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -62,7 +75,7 @@ public class RecyclerFragment extends Fragment {
 
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
-      ensureRecycler();
+        ensureRecycler();
     }
 
     @Override
@@ -75,6 +88,12 @@ public class RecyclerFragment extends Fragment {
         super.onDestroyView();
     }
 
+    /**
+     * Sets the {@link RecyclerView.LayoutManager} object for the {@link RecyclerView} hosted by this fragment.
+     * Note that if you don't specify the layout manager no data will be displayed.
+     *
+     * @param manager the layout manager used to lay out items in this fragment's recycler view
+     */
     public void setLayoutManager(RecyclerView.LayoutManager manager) {
         mManager = manager;
         if (mRecycler != null) {
@@ -101,11 +120,27 @@ public class RecyclerFragment extends Fragment {
         return mAdapter == null || mAdapter.getItemCount() == 0;
     }
 
+    /**
+     * <p>Returns the recycler view hosted by this fragment.</p>
+     * <p>Note : you <b>must</b> add an adapter to this recycler view with {@link #setAdapter(Adapter)}
+     * instead of using {@link RecyclerView#setAdapter(Adapter)} directly.</p>
+     *
+     * @return the recycler view hosted by this fragment
+     */
     public RecyclerView getRecyclerView() {
         ensureRecycler();
         return mRecycler;
     }
 
+    /**
+     * <p>Control whether the recycler view is beeing displayed.
+     * You can make it not displayed if you are waiting for the initial data to be available.
+     * During this time an indeterminate progress indicator will be shown instead.</p>
+     * <p>The default implementation will start with the recycler view hidden, showing it only once
+     * an adapter is given with {@link #setAdapter(Adapter)}.</p>
+     *
+     * @param shown if {@code true} the recycler view is shown, if {@code false} the progress indicator.
+     */
     public void setRecyclerShown(boolean shown) {
         Log.v(TAG, "setRecyclerShown() called with: shown = [" + shown + "]");
         ensureRecycler();
@@ -132,7 +167,7 @@ public class RecyclerFragment extends Fragment {
     }
 
     /**
-     * Get the ListAdapter associated with this fragment's ListView.
+     * Get the adapter associated with this fragment's RecyclerView.
      */
     public Adapter<? extends ViewHolder> getAdapter() {
         return mAdapter;
@@ -142,7 +177,7 @@ public class RecyclerFragment extends Fragment {
      * Sets the adapter for the RecyclerView hosted by this fragment.
      * If the recycler view was hidden and had no adapter, it will be shown.
      *
-     * @param adapter the new adapter
+     * @param adapter the adapter to be associated with this fragment's RecyclerView
      */
     public void setAdapter(Adapter<? extends ViewHolder> adapter) {
         boolean hadAdapter = mAdapter != null;

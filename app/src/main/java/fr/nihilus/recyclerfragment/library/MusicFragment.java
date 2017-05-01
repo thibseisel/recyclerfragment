@@ -17,10 +17,21 @@ public class MusicFragment extends RecyclerFragment implements LoaderManager.Loa
 
     private static final String TAG = "MusicFragment";
 
+    private MusicAdapter mAdapter;
+
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setLayoutManager(new LinearLayoutManager(getContext()));
+    }
+
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+
+        mAdapter = new MusicAdapter(getContext(), null);
+        setAdapter(mAdapter);
+        setRecyclerShown(false);
         getActivity().getSupportLoaderManager().initLoader(0, null, this);
     }
 
@@ -39,13 +50,8 @@ public class MusicFragment extends RecyclerFragment implements LoaderManager.Loa
             @Override
             public void run() {
                 Log.d(TAG, "onLoadFinished: loading finished !");
-                MusicAdapter adapter = (MusicAdapter) getAdapter();
-                if (adapter == null) {
-                    adapter = new MusicAdapter(getContext(), data);
-                    setAdapter(adapter);
-                } else {
-                    adapter.swapCursor(data);
-                }
+                mAdapter.swapCursor(data);
+                setRecyclerShown(true);
             }
         }, 1000);
     }
@@ -53,12 +59,7 @@ public class MusicFragment extends RecyclerFragment implements LoaderManager.Loa
     @Override
     public void onLoaderReset(Loader<Cursor> loader) {
         Log.d(TAG, "onLoaderReset: loader has been reset.");
-        MusicAdapter adapter = (MusicAdapter) getAdapter();
-        if (adapter == null) {
-            adapter = new MusicAdapter(getContext(), null);
-            setAdapter(adapter);
-        } else {
-            adapter.swapCursor(null);
-        }
+        mAdapter.swapCursor(null);
+        setRecyclerShown(true);
     }
 }
