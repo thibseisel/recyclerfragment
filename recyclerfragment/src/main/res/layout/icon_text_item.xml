@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    android:id="@+id/itemView"
+    style="@style/Nihilus.ListItem.Parent"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <ImageView
+        android:id="@+id/avatar"
+        style="@style/Nihilus.ListItem.Avatar.Start"
+        android:contentDescription="@null"
+        tools:src="@drawable/filled_circle"/>
+
+    <LinearLayout
+        style="@style/Nihilus.ListItem.TextContainer"
+        android:layout_centerVertical="true"
+        android:layout_toEndOf="@id/avatar"
+        android:layout_toRightOf="@id/avatar"
+        android:layout_toLeftOf="@+id/icon"
+        android:layout_toStartOf="@+id/icon">
+
+        <TextView
+            android:id="@+id/title"
+            style="@style/Nihilus.ListItem.Title"
+            tools:text="Two-line item"/>
+
+        <TextView
+            android:id="@+id/subtitle"
+            style="@style/Nihilus.ListItem.Subtitle"
+            tools:text="Secondary text"/>
+    </LinearLayout>
+
+    <ImageView
+        android:id="@+id/icon"
+        style="@style/Nihilus.ListItem.Icon.End"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentRight="true"
+        android:contentDescription="@null"
+        tools:src="@android:color/holo_blue_light"/>
+
+</RelativeLayout>

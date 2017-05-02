@@ -5,40 +5,26 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.provider.MediaStore.Audio.Media;
 import android.support.annotation.Nullable;
+import android.support.v4.app.ListFragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
-import android.support.v7.widget.LinearLayoutManager;
 import android.util.Log;
-import android.view.View;
 
-import fr.nihilus.recyclerfragment.RecyclerFragment;
+import static android.content.ContentValues.TAG;
 
-public class MusicFragment extends RecyclerFragment implements LoaderManager.LoaderCallbacks<Cursor> {
+public class MusicListFragment extends ListFragment implements LoaderManager.LoaderCallbacks<Cursor> {
 
-    private static final String TAG = "MusicFragment";
-
-    private MusicAdapter mAdapter;
-
-    @Override
-    public void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setLayoutManager(new LinearLayoutManager(getContext()));
-    }
-
-    @Override
-    public void onViewCreated(View view, Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
-        Log.d(TAG, "onViewCreated() called");
-    }
+    private MusicListAdapter mAdapter;
 
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
-        mAdapter = new MusicAdapter(getContext(), null);
-        setAdapter(mAdapter);
-        setRecyclerShown(false);
+        mAdapter = new MusicListAdapter(getContext(), null);
+        setListAdapter(mAdapter);
+        setListShown(false);
+
         getLoaderManager().initLoader(0, null, this);
     }
 
@@ -58,7 +44,7 @@ public class MusicFragment extends RecyclerFragment implements LoaderManager.Loa
             public void run() {
                 Log.d(TAG, "onLoadFinished: loading finished !");
                 mAdapter.swapCursor(data);
-                setRecyclerShown(true);
+                setListShown(true);
             }
         }, 1000);
     }
