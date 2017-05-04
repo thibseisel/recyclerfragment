@@ -3,13 +3,13 @@ package fr.nihilus.recyclerfragment;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
-import android.support.v4.widget.ContentLoadingProgressBar;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.RecyclerView.AdapterDataObserver;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import static android.support.v7.widget.RecyclerView.Adapter;
@@ -23,7 +23,7 @@ import static android.support.v7.widget.RecyclerView.ViewHolder;
  * To do this, your view hierarchy <em>must</em> contain the following views :
  * <ul>
  * <li>a {@link RecyclerView} with id "@android:id/list"</li>
- * <li>a {@link ContentLoadingProgressBar} with id "@android:id/progress"</li>
+ * <li>a {@link ProgressBar} with id "@android:id/progress"</li>
  * </ul>
  * </p>
  * <p>Optionnaly, your view hierarchy can contain another view object of any type to display
@@ -37,7 +37,7 @@ public class RecyclerFragment extends Fragment {
 
     private Adapter<? extends RecyclerView.ViewHolder> mAdapter;
     private RecyclerView mRecycler;
-    private ContentLoadingProgressBar mProgress;
+    private ProgressBar mProgress;
     private RecyclerView.LayoutManager mManager;
     private View mEmptyView;
 
@@ -48,7 +48,9 @@ public class RecyclerFragment extends Fragment {
         @Override
         public void onChanged() {
             Log.v(TAG, "onChanged: dataset has changed");
-            RecyclerFragment.this.setEmptyShown(hasEmptyState());
+            if (isVisible()) {
+                RecyclerFragment.this.setEmptyShown(isEmpty());
+            }
         }
     };
     private boolean mIsShown;
@@ -60,7 +62,7 @@ public class RecyclerFragment extends Fragment {
     /**
      * <p>Called to have this RecyclerFragment instanciate its view hierarchy.</p>
      * <p>The default implementation creates a layout containing a {@link RecyclerView},
-     * a {@link ContentLoadingProgressBar} and a {@link TextView} with a simple empty text.
+     * a {@link ProgressBar} and a {@link TextView} with a simple empty text.
      * You can override this method to define your own view hierarchy for this fragment.
      * </p>
      *
@@ -75,6 +77,7 @@ public class RecyclerFragment extends Fragment {
 
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
         ensureRecycler();
     }
 
@@ -102,21 +105,16 @@ public class RecyclerFragment extends Fragment {
     }
 
     private void setEmptyShown(boolean shown) {
-        if (getView() != null) {
-            if (mEmptyView == null) {
-                Log.v(TAG, "setEmptyShown: no empty view, changing recyclerview visibility");
-                mRecycler.setVisibility(shown ? View.GONE : View.VISIBLE);
-                return;
-            }
-
-            Log.v(TAG, "setEmptyShown() called with: shown = [" + shown + "]");
-
+        if (mEmptyView == null) {
             mRecycler.setVisibility(shown ? View.GONE : View.VISIBLE);
-            mEmptyView.setVisibility(shown ? View.VISIBLE : View.GONE);
+            return;
         }
+
+        mRecycler.setVisibility(shown ? View.GONE : View.VISIBLE);
+        mEmptyView.setVisibility(shown ? View.VISIBLE : View.GONE);
     }
 
-    private boolean hasEmptyState() {
+    boolean isEmpty() {
         return mAdapter == null || mAdapter.getItemCount() == 0;
     }
 
@@ -142,7 +140,6 @@ public class RecyclerFragment extends Fragment {
      * @param shown if {@code true} the recycler view is shown, if {@code false} the progress indicator.
      */
     public void setRecyclerShown(boolean shown) {
-        Log.v(TAG, "setRecyclerShown() called with: shown = [" + shown + "]");
         ensureRecycler();
         if (mIsShown == shown) {
             // Visibility has not changed, take no action
@@ -150,14 +147,12 @@ public class RecyclerFragment extends Fragment {
         }
 
         mIsShown = shown;
-        Log.v(TAG, "setRecyclerShown: changing progress and recycler view visibility");
-        Log.v(TAG, "setRecyclerShown: is empty ? " + hasEmptyState());
         if (shown) {
-            mProgress.hide();
-            setEmptyShown(hasEmptyState());
+            mProgress.setVisibility(View.GONE);
+            setEmptyShown(isEmpty());
 
         } else {
-            mProgress.show();
+            mProgress.setVisibility(View.VISIBLE);
             mRecycler.setVisibility(View.GONE);
 
             if (mEmptyView != null) {
@@ -182,20 +177,18 @@ public class RecyclerFragment extends Fragment {
     public void setAdapter(Adapter<? extends ViewHolder> adapter) {
         boolean hadAdapter = mAdapter != null;
 
-        Log.v(TAG, "setAdapter: had an adapter ? " + hadAdapter);
-
         if (hadAdapter) {
             // Stop observing the previous adapter
             mAdapter.unregisterAdapterDataObserver(mEmptyStateObserver);
         }
 
         if (adapter != null) {
+            // Start observing the new adapter
             adapter.registerAdapterDataObserver(mEmptyStateObserver);
         }
 
         mAdapter = adapter;
         if (mRecycler != null) {
-            Log.v(TAG, "setAdapter: successfully setting adapter.");
             mRecycler.setAdapter(adapter);
             if (!mIsShown && !hadAdapter) {
                 // The list was hidden, and previously didn't have an adapter.
@@ -232,7 +225,7 @@ public class RecyclerFragment extends Fragment {
                     "that is not a RecyclerView class");
         }
 
-        if (!(rawProgress instanceof ContentLoadingProgressBar)) {
+        if (!(rawProgress instanceof ProgressBar)) {
             if (mProgress == null) {
                 throw new RuntimeException("Your content must have a ContentLoadingProgressBar " +
                         "whose id attribute is 'android.R.id.progress'");
@@ -242,7 +235,7 @@ public class RecyclerFragment extends Fragment {
         }
 
         mRecycler = (RecyclerView) rawRecycler;
-        mProgress = (ContentLoadingProgressBar) rawProgress;
+        mProgress = (ProgressBar) rawProgress;
         mEmptyView = root.findViewById(android.R.id.empty);
 
         setLayoutManager(mManager);
@@ -250,17 +243,13 @@ public class RecyclerFragment extends Fragment {
         mIsShown = true;
         if (mAdapter != null) {
             // If adapter is already provided, show the recycler view
-            Log.v(TAG, "ensureRecycler: adapter already provided");
             Adapter<? extends ViewHolder> adapter = mAdapter;
             mAdapter = null;
             setAdapter(adapter);
         } else {
-            Log.v(TAG, "ensureRecycler: no adapter provided");
             // We are starting without an adapter, so assume we won't
             // have our data right away and start with the progress indicator.
-            if (mProgress != null) {
-                setRecyclerShown(false);
-            }
+            setRecyclerShown(false);
         }
     }
 }

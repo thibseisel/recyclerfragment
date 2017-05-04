@@ -28,13 +28,15 @@ public class MusicFragment extends RecyclerFragment implements LoaderManager.Loa
 
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
         Log.d(TAG, "onViewCreated() called");
+        super.onViewCreated(view, savedInstanceState);
     }
 
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
+
+        Log.d(TAG, "onActivityCreated() called");
 
         mAdapter = new MusicAdapter(getContext(), null);
         setAdapter(mAdapter);
@@ -60,7 +62,7 @@ public class MusicFragment extends RecyclerFragment implements LoaderManager.Loa
                 mAdapter.swapCursor(data);
                 setRecyclerShown(true);
             }
-        }, 1000);
+        }, 1200);
     }
 
     @Override
