@@ -5,7 +5,6 @@ import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.RecyclerView.AdapterDataObserver;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -29,54 +28,23 @@ import static android.support.v7.widget.RecyclerView.ViewHolder;
  * the recycler view will be hidden when there is no data to display.
  */
 public class RecyclerFragment extends Fragment {
-
     private static final String TAG = "RecyclerFragment";
-    private static final int MIN_SHOW_TIME = 500;
-    private static final int MIN_DELAY = 500;
 
     private Adapter<? extends RecyclerView.ViewHolder> mAdapter;
     private RecyclerView mRecycler;
     private View mProgress;
     private RecyclerView.LayoutManager mManager;
     private View mEmptyView;
-
-    private long mStartTime = -1;
-    private boolean mDismissed = false;
-    private boolean mPostedShow = false;
-    private boolean mPostedHide = false;
     private boolean mIsShown;
+
     /**
      * Listens for changes in adapter to show the empty view when adapter is empty.
      */
     private final AdapterDataObserver mEmptyStateObserver = new AdapterDataObserver() {
         @Override
         public void onChanged() {
-            Log.v(TAG, "onChanged: dataset has changed");
             if (isVisible()) {
                 RecyclerFragment.this.setEmptyShown(isEmpty());
-            }
-        }
-    };
-
-    private final Runnable mDelayedHide = new Runnable() {
-        @Override
-        public void run() {
-            Log.d(TAG, "mDelayedHide");
-            mPostedHide = false;
-            mStartTime = -1;
-            hide();
-        }
-    };
-
-    private final Runnable mDelayedShow = new Runnable() {
-        @Override
-        public void run() {
-            Log.d(TAG, "mDelayedShow");
-            mPostedShow = false;
-            if (!mDismissed) {
-                Log.d(TAG, "Was not dismissed");
-                mStartTime = System.currentTimeMillis();
-                show();
             }
         }
     };
@@ -105,18 +73,6 @@ public class RecyclerFragment extends Fragment {
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         ensureRecycler();
-    }
-
-    @Override
-    public void onStart() {
-        super.onStart();
-        removeCallbacks();
-    }
-
-    @Override
-    public void onStop() {
-        super.onStop();
-        removeCallbacks();
     }
 
     @Override
@@ -179,44 +135,16 @@ public class RecyclerFragment extends Fragment {
      */
     public void setRecyclerShown(boolean shown) {
         ensureRecycler();
-        Log.d(TAG, "setRecyclerShown: toggle visibility to : " + shown);
         if (mIsShown == shown) {
             // Visibility has not changed, take no action
-            Log.d(TAG, "setRecyclerShown: no action to take.");
             return;
         }
 
         mIsShown = shown;
         if (shown) {
-            mDismissed = true;
-            mRecycler.removeCallbacks(mDelayedShow);
-            long diff = System.currentTimeMillis() - mStartTime;
-            if (diff >= MIN_SHOW_TIME || mStartTime == -1) {
-                Log.d(TAG, "setRecyclerShown: progress indicator shown long enough or never shown");
-                Log.d(TAG, "setRecyclerShown: showing RecyclerView");
-                // The progress indicator has been shown long enough
-                // OR was not shown yet. If it wasn't shown yet,
-                // it will just never be shown.
-                show();
-            } else if (!mPostedHide) {
-                Log.d(TAG, "setRecyclerShown: progress indicator not shown enough");
-                Log.d(TAG, "setRecyclerShown: posting mDelayedHide");
-                // The progress indicator is shown, but not long enough,
-                // so put a delayed message when its been
-                // shown long enough
-                mProgress.postDelayed(mDelayedHide, MIN_SHOW_TIME - diff);
-                mPostedHide = true;
-            }
+            show();
         } else {
-            // Reset the start time
-            mStartTime = -1;
-            mDismissed = false;
-            mProgress.removeCallbacks(mDelayedHide);
-            if (!mPostedShow) {
-                Log.d(TAG, "setRecyclerShown: posting mDelayedShow");
-                mProgress.postDelayed(mDelayedShow, MIN_DELAY);
-                mPostedShow = true;
-            }
+            hide();
         }
     }
 
@@ -224,9 +152,6 @@ public class RecyclerFragment extends Fragment {
         mIsShown = true;
         mProgress.setVisibility(View.GONE);
         setEmptyShown(isEmpty());
-        Log.d(TAG, "show: mProgress visibility: " + mProgress.getVisibility());
-        Log.d(TAG, "show: mRecycler visibility: " + mRecycler.getVisibility());
-        Log.d(TAG, "show: mEmpty visibility: " + mEmptyView.getVisibility());
     }
 
     private void hide() {
@@ -237,10 +162,6 @@ public class RecyclerFragment extends Fragment {
         if (mEmptyView != null) {
             mEmptyView.setVisibility(View.GONE);
         }
-
-        Log.d(TAG, "hide: mProgress visibility: " + mProgress.getVisibility());
-        Log.d(TAG, "hide: mRecycler visibility: " + mRecycler.getVisibility());
-        Log.d(TAG, "hide: mEmpty visibility: " + mEmptyView.getVisibility());
     }
 
     /**
@@ -323,10 +244,5 @@ public class RecyclerFragment extends Fragment {
             // have our data right away and start with the progress indicator.
             setRecyclerShown(false);
         }
-    }
-
-    private void removeCallbacks() {
-        mProgress.removeCallbacks(mDelayedHide);
-        mProgress.removeCallbacks(mDelayedShow);
     }
 }
