@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <PreferenceCategory android:title="Usage of RecyclerFragment">
+
+        <Preference
+            android:summary="Load static data into RecyclerFragment"
+            android:title="Static data">
+            <intent
+                android:targetClass="fr.nihilus.recyclerfragment.demo.HostActivity"
+                android:targetPackage="fr.nihilus.recyclerfragment.demo"
+                android:data="fr.nihilus.recyclerfragment.demo.loading.StaticDataFragment"/>
+        </Preference>
+
+        <Preference
+            android:summary="Use a CursorLoader to display the music library"
+            android:title="Dynamic data">
+            <intent
+                android:data="fr.nihilus.recyclerfragment.demo.loading.DynamicDataFragment"
+                android:targetClass="fr.nihilus.recyclerfragment.demo.HostActivity"
+                android:targetPackage="fr.nihilus.recyclerfragment.demo"/>
+        </Preference>
+
+        <Preference
+            android:summary="Show the progress indicator while waiting for data loading"
+            android:title="Asynchronous loading">
+            <intent
+                android:data="fr.nihilus.recyclerfragment.demo.loading.AsynchronousLoadingFragment"
+                android:targetClass="fr.nihilus.recyclerfragment.demo.HostActivity"
+                android:targetPackage="fr.nihilus.recyclerfragment.demo"/>
+        </Preference>
+
+        <Preference
+            android:summary="Show empty state when there's no data to display"
+            android:title="Empty dataset">
+            <intent
+                android:data="fr.nihilus.recyclerfragment.demo.loading.EmptyFragment"
+                android:targetClass="fr.nihilus.recyclerfragment.demo.HostActivity"
+                android:targetPackage="fr.nihilus.recyclerfragment.demo"/>
+        </Preference>
+    </PreferenceCategory>
+
+    <PreferenceCategory android:title="Custom layout">
+
+    </PreferenceCategory>
+
+    <PreferenceCategory android:title="List items">
+
+        <Preference
+            android:summary="An item composed of a single line of text and an icon"
+            android:title="Single line item"/>
+
+    </PreferenceCategory>
+</PreferenceScreen>

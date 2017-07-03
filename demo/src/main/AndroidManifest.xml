@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<manifest package="fr.nihilus.recyclerfragment.library"
+<manifest package="fr.nihilus.recyclerfragment.demo"
           xmlns:android="http://schemas.android.com/apk/res/android">
 
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
@@ -11,16 +11,14 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".HomeActivity">
+        <activity android:name="fr.nihilus.recyclerfragment.demo.HomeActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
 
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
-        <activity android:name=".RecyclerActivity"/>
-        <activity android:name=".ListFragmentActivity">
-        </activity>
+        <activity android:name="fr.nihilus.recyclerfragment.demo.HostActivity"/>
     </application>
 
 </manifest>

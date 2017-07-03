@@ -1,8 +1,28 @@
 apply plugin: 'com.android.library'
-apply plugin: 'maven'
 
-group = 'fr.nihilus'
-version = '1.0.0'
+ext {
+    bintrayRepo = 'maven'
+    bintrayName = 'recyclerfragment'
+
+    publishedGroupId = 'fr.nihilus'
+    libraryName = 'RecyclerFragment'
+    artifact = 'recyclerfragment'
+
+    libraryDescription = 'An Android Fragment that displays a set of items in a RecyclerView.'
+
+    siteUrl = 'https://github.com/thibseisel/recyclerfragment'
+    gitUrl = 'https://github.com/thibseisel/recyclerfragment.git'
+
+    libraryVersion = '1.0.0'
+
+    developerId = 'thibseisel'
+    developerName = 'Thibault Seisel'
+    developerEmail = 'seisel.thibault@gmail.com'
+
+    licenseName = 'The Apache Software License, Version 2.0'
+    licenseUrl = 'http://www/apache.org/licenses/LICENSE-2.0.txt'
+    allLicenses = ['Apache-2.0']
+}
 
 android {
     compileSdkVersion 25
@@ -25,12 +45,6 @@ android {
     }
 }
 
-uploadArchives {
-    repositories {
-        mavenLocal()
-    }
-}
-
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
     androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
@@ -40,3 +54,7 @@ dependencies {
     compile 'com.android.support:recyclerview-v7:25.3.1'
     testCompile 'junit:junit:4.12'
 }
+
+// Needed to publish to Bintray
+apply from: 'https://raw.githubusercontent.com/nuuneoi/JCenter/master/installv1.gradle'
+apply from: 'https://raw.githubusercontent.com/nuuneoi/JCenter/master/bintrayv1.gradle'

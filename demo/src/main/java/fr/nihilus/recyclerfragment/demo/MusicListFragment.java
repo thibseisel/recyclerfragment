@@ -1,4 +1,4 @@
-package fr.nihilus.recyclerfragment.library;
+package fr.nihilus.recyclerfragment.demo;
 
 import android.database.Cursor;
 import android.os.Bundle;

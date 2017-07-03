@@ -1,4 +1,4 @@
-package fr.nihilus.recyclerfragment.library;
+package fr.nihilus.recyclerfragment.demo;
 
 import android.content.ContentUris;
 import android.content.Context;
@@ -20,7 +20,7 @@ public class MusicListAdapter extends CursorAdapter {
 
     private final Picasso mPicasso;
 
-    public MusicListAdapter(Context context, Cursor c) {
+    MusicListAdapter(Context context, Cursor c) {
         super(context, c, 0);
         mPicasso = Picasso.with(context);
     }

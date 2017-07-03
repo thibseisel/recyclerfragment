@@ -1,4 +1,4 @@
-package fr.nihilus.recyclerfragment.library;
+package fr.nihilus.recyclerfragment.demo;
 
 import android.content.ContentUris;
 import android.content.Context;
@@ -16,7 +16,7 @@ import android.widget.TextView;
 
 import com.squareup.picasso.Picasso;
 
-class MusicAdapter extends RecyclerView.Adapter<MusicAdapter.SongHolder> {
+public class MusicAdapter extends RecyclerView.Adapter<MusicAdapter.SongHolder> {
 
     private static final Uri ALBUM_ART_URI = Uri.parse("content://media/external/audio/albumart");
 
@@ -27,7 +27,7 @@ class MusicAdapter extends RecyclerView.Adapter<MusicAdapter.SongHolder> {
 
     private final Picasso mPicasso;
 
-    MusicAdapter(@NonNull Context context, @Nullable Cursor cursor) {
+    public MusicAdapter(@NonNull Context context, @Nullable Cursor cursor) {
         mPicasso = Picasso.with(context);
         mCursor = cursor;
         if (mCursor != null) {
@@ -68,7 +68,7 @@ class MusicAdapter extends RecyclerView.Adapter<MusicAdapter.SongHolder> {
         return RecyclerView.NO_ID;
     }
 
-    Cursor swapCursor(Cursor newCursor) {
+    public Cursor swapCursor(Cursor newCursor) {
         if (newCursor == mCursor) {
             return newCursor;
         }

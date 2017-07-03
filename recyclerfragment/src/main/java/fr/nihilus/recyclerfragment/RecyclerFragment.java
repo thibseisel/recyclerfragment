@@ -9,38 +9,42 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ProgressBar;
-import android.widget.TextView;
 
 import static android.support.v7.widget.RecyclerView.Adapter;
 import static android.support.v7.widget.RecyclerView.ViewHolder;
 
 /**
- * <p>A fragment that hosts a {@link RecyclerView} to display a set of items.</p>
+ * <p>A fragment that hosts a RecyclerView to display a set of items.</p>
  * <p>RecyclerFragment has a default layout that consists of a single RecyclerView.
  * Howether if yo desire, you can customize the fragment layout by returning your own view hierarchy from
- * {@link #onCreateView(LayoutInflater, ViewGroup, Bundle)}.
+ * onCreateView.
  * To do this, your view hierarchy <em>must</em> contain the following views :
  * <ul>
- * <li>a {@link RecyclerView} with id "@android:id/list"</li>
- * <li>a {@link ProgressBar} with id "@android:id/progress"</li>
+ * <li>a RecyclerView with id "@android:id/list"</li>
+ * <li>any View with id "@android:id/progress"</li>
  * </ul>
- * </p>
  * <p>Optionnaly, your view hierarchy can contain another view object of any type to display
  * when the recycler view is empty.
  * This empty view must have an id "@android:id/empty". Note that when an empty view is present,
- * the recycler view will be hidden when there is no data to display.</p>
+ * the recycler view will be hidden when there is no data to display.
  */
 public class RecyclerFragment extends Fragment {
 
     private static final String TAG = "RecyclerFragment";
+    private static final int MIN_SHOW_TIME = 500;
+    private static final int MIN_DELAY = 500;
 
     private Adapter<? extends RecyclerView.ViewHolder> mAdapter;
     private RecyclerView mRecycler;
-    private ProgressBar mProgress;
+    private View mProgress;
     private RecyclerView.LayoutManager mManager;
     private View mEmptyView;
 
+    private long mStartTime = -1;
+    private boolean mDismissed = false;
+    private boolean mPostedShow = false;
+    private boolean mPostedHide = false;
+    private boolean mIsShown;
     /**
      * Listens for changes in adapter to show the empty view when adapter is empty.
      */
@@ -53,7 +57,29 @@ public class RecyclerFragment extends Fragment {
             }
         }
     };
-    private boolean mIsShown;
+
+    private final Runnable mDelayedHide = new Runnable() {
+        @Override
+        public void run() {
+            Log.d(TAG, "mDelayedHide");
+            mPostedHide = false;
+            mStartTime = -1;
+            hide();
+        }
+    };
+
+    private final Runnable mDelayedShow = new Runnable() {
+        @Override
+        public void run() {
+            Log.d(TAG, "mDelayedShow");
+            mPostedShow = false;
+            if (!mDismissed) {
+                Log.d(TAG, "Was not dismissed");
+                mStartTime = System.currentTimeMillis();
+                show();
+            }
+        }
+    };
 
     public RecyclerFragment() {
         // Required empty constructor
@@ -61,8 +87,8 @@ public class RecyclerFragment extends Fragment {
 
     /**
      * <p>Called to have this RecyclerFragment instanciate its view hierarchy.</p>
-     * <p>The default implementation creates a layout containing a {@link RecyclerView},
-     * a {@link ProgressBar} and a {@link TextView} with a simple empty text.
+     * <p>The default implementation creates a layout containing a RecyclerView,
+     * a ProgressBar and a TextView with a simple empty text.
      * You can override this method to define your own view hierarchy for this fragment.
      * </p>
      *
@@ -82,6 +108,18 @@ public class RecyclerFragment extends Fragment {
     }
 
     @Override
+    public void onStart() {
+        super.onStart();
+        removeCallbacks();
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        removeCallbacks();
+    }
+
+    @Override
     public void onDestroyView() {
         // Nullify view references to free memory when fragment is retained
         mRecycler = null;
@@ -92,7 +130,7 @@ public class RecyclerFragment extends Fragment {
     }
 
     /**
-     * Sets the {@link RecyclerView.LayoutManager} object for the {@link RecyclerView} hosted by this fragment.
+     * Sets the RecyclerView.LayoutManager object for the RecyclerView hosted by this fragment.
      * Note that if you don't specify the layout manager no data will be displayed.
      *
      * @param manager the layout manager used to lay out items in this fragment's recycler view
@@ -120,8 +158,8 @@ public class RecyclerFragment extends Fragment {
 
     /**
      * <p>Returns the recycler view hosted by this fragment.</p>
-     * <p>Note : you <b>must</b> add an adapter to this recycler view with {@link #setAdapter(Adapter)}
-     * instead of using {@link RecyclerView#setAdapter(Adapter)} directly.</p>
+     * <p>Note : you <b>must</b> add an adapter to this recycler view with setAdapter(Adapter)
+     * instead of using RecyclerView#setAdapter(Adapter) directly.</p>
      *
      * @return the recycler view hosted by this fragment
      */
@@ -135,30 +173,74 @@ public class RecyclerFragment extends Fragment {
      * You can make it not displayed if you are waiting for the initial data to be available.
      * During this time an indeterminate progress indicator will be shown instead.</p>
      * <p>The default implementation will start with the recycler view hidden, showing it only once
-     * an adapter is given with {@link #setAdapter(Adapter)}.</p>
+     * an adapter is given with etAdapter(Adapter).</p>
      *
      * @param shown if {@code true} the recycler view is shown, if {@code false} the progress indicator.
      */
     public void setRecyclerShown(boolean shown) {
         ensureRecycler();
+        Log.d(TAG, "setRecyclerShown: toggle visibility to : " + shown);
         if (mIsShown == shown) {
             // Visibility has not changed, take no action
+            Log.d(TAG, "setRecyclerShown: no action to take.");
             return;
         }
 
         mIsShown = shown;
         if (shown) {
-            mProgress.setVisibility(View.GONE);
-            setEmptyShown(isEmpty());
-
+            mDismissed = true;
+            mRecycler.removeCallbacks(mDelayedShow);
+            long diff = System.currentTimeMillis() - mStartTime;
+            if (diff >= MIN_SHOW_TIME || mStartTime == -1) {
+                Log.d(TAG, "setRecyclerShown: progress indicator shown long enough or never shown");
+                Log.d(TAG, "setRecyclerShown: showing RecyclerView");
+                // The progress indicator has been shown long enough
+                // OR was not shown yet. If it wasn't shown yet,
+                // it will just never be shown.
+                show();
+            } else if (!mPostedHide) {
+                Log.d(TAG, "setRecyclerShown: progress indicator not shown enough");
+                Log.d(TAG, "setRecyclerShown: posting mDelayedHide");
+                // The progress indicator is shown, but not long enough,
+                // so put a delayed message when its been
+                // shown long enough
+                mProgress.postDelayed(mDelayedHide, MIN_SHOW_TIME - diff);
+                mPostedHide = true;
+            }
         } else {
-            mProgress.setVisibility(View.VISIBLE);
-            mRecycler.setVisibility(View.GONE);
-
-            if (mEmptyView != null) {
-                mEmptyView.setVisibility(View.GONE);
+            // Reset the start time
+            mStartTime = -1;
+            mDismissed = false;
+            mProgress.removeCallbacks(mDelayedHide);
+            if (!mPostedShow) {
+                Log.d(TAG, "setRecyclerShown: posting mDelayedShow");
+                mProgress.postDelayed(mDelayedShow, MIN_DELAY);
+                mPostedShow = true;
             }
         }
+    }
+
+    private void show() {
+        mIsShown = true;
+        mProgress.setVisibility(View.GONE);
+        setEmptyShown(isEmpty());
+        Log.d(TAG, "show: mProgress visibility: " + mProgress.getVisibility());
+        Log.d(TAG, "show: mRecycler visibility: " + mRecycler.getVisibility());
+        Log.d(TAG, "show: mEmpty visibility: " + mEmptyView.getVisibility());
+    }
+
+    private void hide() {
+        mIsShown = false;
+        mProgress.setVisibility(View.VISIBLE);
+        mRecycler.setVisibility(View.GONE);
+
+        if (mEmptyView != null) {
+            mEmptyView.setVisibility(View.GONE);
+        }
+
+        Log.d(TAG, "hide: mProgress visibility: " + mProgress.getVisibility());
+        Log.d(TAG, "hide: mRecycler visibility: " + mRecycler.getVisibility());
+        Log.d(TAG, "hide: mEmpty visibility: " + mEmptyView.getVisibility());
     }
 
     /**
@@ -214,7 +296,6 @@ public class RecyclerFragment extends Fragment {
         }
 
         View rawRecycler = root.findViewById(android.R.id.list);
-        View rawProgress = root.findViewById(android.R.id.progress);
 
         if (!(rawRecycler instanceof RecyclerView)) {
             if (mRecycler == null) {
@@ -225,17 +306,8 @@ public class RecyclerFragment extends Fragment {
                     "that is not a RecyclerView class");
         }
 
-        if (!(rawProgress instanceof ProgressBar)) {
-            if (mProgress == null) {
-                throw new RuntimeException("Your content must have a ContentLoadingProgressBar " +
-                        "whose id attribute is 'android.R.id.progress'");
-            }
-            throw new RuntimeException("Content has view with id 'android.R.id.progress'" +
-                    "that is not a ContentLoadingProgressBar class");
-        }
-
         mRecycler = (RecyclerView) rawRecycler;
-        mProgress = (ProgressBar) rawProgress;
+        mProgress = root.findViewById(android.R.id.progress);
         mEmptyView = root.findViewById(android.R.id.empty);
 
         setLayoutManager(mManager);
@@ -251,5 +323,10 @@ public class RecyclerFragment extends Fragment {
             // have our data right away and start with the progress indicator.
             setRecyclerShown(false);
         }
+    }
+
+    private void removeCallbacks() {
+        mProgress.removeCallbacks(mDelayedHide);
+        mProgress.removeCallbacks(mDelayedShow);
     }
 }
