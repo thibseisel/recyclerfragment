@@ -14,9 +14,15 @@ buildscript {
     }
 }
 
+ext {
+    supportLibVersion = '25.4.0'
+    junitVersion = '4.12'
+}
+
 allprojects {
     repositories {
         jcenter()
+        maven { url 'https://maven.google.com' }
     }
 }
 

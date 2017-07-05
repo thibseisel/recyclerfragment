@@ -40,7 +40,7 @@
         </Preference>
     </PreferenceCategory>
 
-    <PreferenceCategory android:title="Custom layout">
+    <!--<PreferenceCategory android:title="Custom layout">
 
     </PreferenceCategory>
 
@@ -50,5 +50,5 @@
             android:summary="An item composed of a single line of text and an icon"
             android:title="Single line item"/>
 
-    </PreferenceCategory>
+    </PreferenceCategory> -->
 </PreferenceScreen>
