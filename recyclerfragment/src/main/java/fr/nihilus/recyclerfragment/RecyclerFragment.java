@@ -57,7 +57,6 @@ public class RecyclerFragment extends Fragment {
     private final Runnable mDelayedShow = new Runnable() {
         @Override
         public void run() {
-            Log.d(TAG, "mDelayedShow: should SHOW RecyclerView");
             mPostedShow = false;
             mStartTime = -1;
             showRecycler(true);
@@ -67,10 +66,8 @@ public class RecyclerFragment extends Fragment {
     private final Runnable mDelayedHide = new Runnable() {
         @Override
         public void run() {
-            Log.d(TAG, "mDelayedHide: should HIDE RecyclerView");
             mPostedHide = false;
             if (!mDismissed) {
-                Log.d(TAG, "not dimissed : HIDE RecyclerView");
                 mStartTime = System.currentTimeMillis();
                 showRecycler(false);
             }
@@ -100,7 +97,6 @@ public class RecyclerFragment extends Fragment {
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        Log.d(TAG, "onViewCreated() called");
         ensureRecycler();
     }
 
@@ -127,7 +123,6 @@ public class RecyclerFragment extends Fragment {
     }
 
     private void setEmptyShown(boolean shown) {
-        Log.d(TAG, "setEmptyShown() called with: shown = [" + shown + "]");
         if (mEmptyView == null) {
             mRecycler.setVisibility(shown ? View.GONE : View.VISIBLE);
             return;
@@ -160,17 +155,14 @@ public class RecyclerFragment extends Fragment {
      */
     public void setRecyclerShown(boolean shown) {
         ensureRecycler();
-        Log.d(TAG, "setRecyclerShown() called with: shown = [" + shown + "]");
 
         if (shown) {
             mDismissed = true;
             mRecyclerContainer.removeCallbacks(mDelayedHide);
             long diff = System.currentTimeMillis() - mStartTime;
             if (diff >= MIN_SHOW_TIME || mStartTime == 1) {
-                Log.d(TAG, "setRecyclerShown: hidden long enough or not hidden yet.");
                 showRecycler(true);
             } else {
-                Log.d(TAG, "setRecyclerShown: Progress should be displayed more time");
                 if (!mPostedShow) {
                     mRecyclerContainer.postDelayed(mDelayedShow, MIN_SHOW_TIME - diff);
                     mPostedShow = true;
@@ -188,7 +180,6 @@ public class RecyclerFragment extends Fragment {
     }
 
     private void showRecycler(boolean shown) {
-        Log.d(TAG, "showRecycler() called with: shown = [" + shown + "]");
         if (shown) {
             mRecyclerContainer.setVisibility(View.VISIBLE);
             mProgress.setVisibility(View.GONE);
@@ -244,8 +235,6 @@ public class RecyclerFragment extends Fragment {
         if (mRecycler != null) {
             return;
         }
-
-        Log.d(TAG, "ensureRecycler() called");
 
         View root = getView();
         if (root == null) {
