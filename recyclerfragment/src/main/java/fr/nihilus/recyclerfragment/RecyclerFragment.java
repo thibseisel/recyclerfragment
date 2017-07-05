@@ -29,23 +29,36 @@ import static android.support.v7.widget.RecyclerView.ViewHolder;
  */
 public class RecyclerFragment extends Fragment {
     private static final String TAG = "RecyclerFragment";
+    private static final int MIN_DELAY = 500;
 
     private Adapter<? extends RecyclerView.ViewHolder> mAdapter;
     private RecyclerView mRecycler;
     private View mProgress;
+    private View mRecyclerContainer;
     private RecyclerView.LayoutManager mManager;
     private View mEmptyView;
     private boolean mIsShown;
 
-    /**
-     * Listens for changes in adapter to show the empty view when adapter is empty.
-     */
     private final AdapterDataObserver mEmptyStateObserver = new AdapterDataObserver() {
         @Override
         public void onChanged() {
             if (isVisible()) {
                 RecyclerFragment.this.setEmptyShown(isEmpty());
             }
+        }
+    };
+
+    private final Runnable mDelayedShow = new Runnable() {
+        @Override
+        public void run() {
+            showRecycler(true);
+        }
+    };
+
+    private final Runnable mDelayedHide = new Runnable() {
+        @Override
+        public void run() {
+            showRecycler(false);
         }
     };
 
@@ -76,11 +89,16 @@ public class RecyclerFragment extends Fragment {
     }
 
     @Override
+    public void onStop() {
+        mRecyclerContainer.removeCallbacks(mDelayedShow);
+        mRecyclerContainer.removeCallbacks(mDelayedHide);
+        super.onStop();
+    }
+
+    @Override
     public void onDestroyView() {
-        // Nullify view references to free memory when fragment is retained
         mRecycler = null;
-        mEmptyView = null;
-        mProgress = null;
+        mRecyclerContainer = mEmptyView = mProgress = null;
         mIsShown = false;
         super.onDestroyView();
     }
@@ -135,32 +153,28 @@ public class RecyclerFragment extends Fragment {
      */
     public void setRecyclerShown(boolean shown) {
         ensureRecycler();
+
+        if (shown) {
+            mRecyclerContainer.removeCallbacks(mDelayedHide);
+            mRecyclerContainer.postDelayed(mDelayedShow, MIN_DELAY);
+        } else {
+            mRecyclerContainer.removeCallbacks(mDelayedShow);
+            mRecyclerContainer.postDelayed(mDelayedHide, MIN_DELAY);
+        }
+    }
+
+    private void showRecycler(boolean shown) {
         if (mIsShown == shown) {
-            // Visibility has not changed, take no action
             return;
         }
 
         mIsShown = shown;
         if (shown) {
-            show();
+            mRecyclerContainer.setVisibility(View.VISIBLE);
+            mProgress.setVisibility(View.GONE);
         } else {
-            hide();
-        }
-    }
-
-    private void show() {
-        mIsShown = true;
-        mProgress.setVisibility(View.GONE);
-        setEmptyShown(isEmpty());
-    }
-
-    private void hide() {
-        mIsShown = false;
-        mProgress.setVisibility(View.VISIBLE);
-        mRecycler.setVisibility(View.GONE);
-
-        if (mEmptyView != null) {
-            mEmptyView.setVisibility(View.GONE);
+            mRecyclerContainer.setVisibility(View.GONE);
+            mProgress.setVisibility(View.VISIBLE);
         }
     }
 
@@ -193,7 +207,7 @@ public class RecyclerFragment extends Fragment {
         mAdapter = adapter;
         if (mRecycler != null) {
             mRecycler.setAdapter(adapter);
-            if (!mIsShown && !hadAdapter) {
+            if (!hadAdapter) {
                 // The list was hidden, and previously didn't have an adapter.
                 // It is now time to show it.
                 setRecyclerShown(true);
@@ -216,20 +230,30 @@ public class RecyclerFragment extends Fragment {
             throw new IllegalStateException("Content view not yet created");
         }
 
-        View rawRecycler = root.findViewById(android.R.id.list);
+        mProgress = root.findViewById(R.id.progress);
+        if (mProgress == null) {
+            throw new RuntimeException("Your content must have a View with id 'R.id.progress' " +
+                    "to be displayed when RecyclerView is not shown");
+        }
 
+        mRecyclerContainer = root.findViewById(R.id.recycler_container);
+        if (mRecyclerContainer == null) {
+            throw new RuntimeException("Your content must have a ViewGroup " +
+                    "whose id attribute is 'R.id.recycler_container'");
+        }
+
+        View rawRecycler = root.findViewById(R.id.recycler);
         if (!(rawRecycler instanceof RecyclerView)) {
             if (mRecycler == null) {
                 throw new RuntimeException("Your content must have a RecyclerView " +
-                        "whose id attribute is 'android.R.id.list'");
+                        "whose id attribute is 'R.id.recycler' and child of R.id.recycler_container");
             }
-            throw new RuntimeException("Content has view with id attribute 'android.R.id.list'" +
-                    "that is not a RecyclerView class");
+            throw new RuntimeException("Content has view with id attribute 'R.id.recycler'" +
+                    "that is not a RecyclerView");
         }
 
         mRecycler = (RecyclerView) rawRecycler;
-        mProgress = root.findViewById(android.R.id.progress);
-        mEmptyView = root.findViewById(android.R.id.empty);
+        mEmptyView = root.findViewById(R.id.empty);
 
         setLayoutManager(mManager);
 
