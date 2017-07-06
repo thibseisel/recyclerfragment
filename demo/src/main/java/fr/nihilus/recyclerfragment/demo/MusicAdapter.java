@@ -3,6 +3,7 @@ package fr.nihilus.recyclerfragment.demo;
 import android.content.ContentUris;
 import android.content.Context;
 import android.database.Cursor;
+import android.graphics.Bitmap;
 import android.net.Uri;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
@@ -14,7 +15,9 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.squareup.picasso.Picasso;
+import com.bumptech.glide.BitmapRequestBuilder;
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
 
 public class MusicAdapter extends RecyclerView.Adapter<MusicAdapter.SongHolder> {
 
@@ -25,16 +28,18 @@ public class MusicAdapter extends RecyclerView.Adapter<MusicAdapter.SongHolder> 
     private int mColTitle;
     private int mColAlbumId;
 
-    private final Picasso mPicasso;
+    private final BitmapRequestBuilder<Uri, Bitmap> mGlideRequest;
 
     public MusicAdapter(@NonNull Context context, @Nullable Cursor cursor) {
-        mPicasso = Picasso.with(context);
         mCursor = cursor;
         if (mCursor != null) {
             mColId = cursor.getColumnIndexOrThrow(MediaStore.Audio.Media._ID);
             mColTitle = cursor.getColumnIndexOrThrow(MediaStore.Audio.Media.TITLE);
             mColAlbumId = cursor.getColumnIndexOrThrow(MediaStore.Audio.Media.ALBUM_ID);
         }
+
+        mGlideRequest = Glide.with(context).fromUri().asBitmap()
+                .diskCacheStrategy(DiskCacheStrategy.NONE);
     }
 
     @Override
@@ -51,7 +56,7 @@ public class MusicAdapter extends RecyclerView.Adapter<MusicAdapter.SongHolder> 
 
         long albumId = mCursor.getLong(mColAlbumId);
         Uri albumArtUri = ContentUris.withAppendedId(ALBUM_ART_URI, albumId);
-        mPicasso.load(albumArtUri).into(holder.albumArt);
+        mGlideRequest.load(albumArtUri).into(holder.albumArt);
     }
 
     @Override

@@ -3,6 +3,7 @@ package fr.nihilus.recyclerfragment.demo;
 import android.content.ContentUris;
 import android.content.Context;
 import android.database.Cursor;
+import android.graphics.Bitmap;
 import android.net.Uri;
 import android.provider.MediaStore;
 import android.support.v4.widget.CursorAdapter;
@@ -12,17 +13,20 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.squareup.picasso.Picasso;
+import com.bumptech.glide.BitmapRequestBuilder;
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
 
-public class MusicListAdapter extends CursorAdapter {
+class MusicListAdapter extends CursorAdapter {
 
     private static final Uri ALBUM_ART_URI = Uri.parse("content://media/external/audio/albumart");
 
-    private final Picasso mPicasso;
+    private final BitmapRequestBuilder<Uri, Bitmap> mGlideRequest;
 
     MusicListAdapter(Context context, Cursor c) {
         super(context, c, 0);
-        mPicasso = Picasso.with(context);
+        mGlideRequest = Glide.with(context).fromUri().asBitmap()
+                .diskCacheStrategy(DiskCacheStrategy.NONE);
     }
 
     @Override
@@ -41,7 +45,7 @@ public class MusicListAdapter extends CursorAdapter {
 
         ViewHolder holder = (ViewHolder) view.getTag();
         holder.title.setText(title);
-        mPicasso.load(albumArtUri).into(holder.albumArt);
+        mGlideRequest.load(albumArtUri).into(holder.albumArt);
     }
 
     private static class ViewHolder {
