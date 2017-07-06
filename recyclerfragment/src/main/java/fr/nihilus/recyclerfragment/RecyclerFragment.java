@@ -1,6 +1,7 @@
 package fr.nihilus.recyclerfragment;
 
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -39,6 +40,8 @@ public class RecyclerFragment extends Fragment {
     private View mProgress;
     private View mRecyclerContainer;
     private View mEmptyView;
+
+    private final Handler mHandler = new Handler();
 
     private long mStartTime = -1;
     private boolean mPostedHide = false;
@@ -89,7 +92,7 @@ public class RecyclerFragment extends Fragment {
      */
     @NonNull
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
         return inflater.inflate(R.layout.fragment_recycler, container, false);
     }
@@ -102,8 +105,9 @@ public class RecyclerFragment extends Fragment {
 
     @Override
     public void onDestroyView() {
-        mRecyclerContainer.removeCallbacks(mDelayedShow);
-        mRecyclerContainer.removeCallbacks(mDelayedHide);
+        mHandler.removeCallbacks(mDelayedShow);
+        mHandler.removeCallbacks(mDelayedHide);
+        mPostedHide = mPostedShow = false;
         mRecycler = null;
         mRecyclerContainer = mEmptyView = mProgress = null;
         super.onDestroyView();
@@ -156,24 +160,26 @@ public class RecyclerFragment extends Fragment {
 
         if (shown) {
             mDismissed = true;
-            mRecyclerContainer.removeCallbacks(mDelayedHide);
+            mPostedHide = false;
+            mHandler.removeCallbacks(mDelayedHide);
             long diff = System.currentTimeMillis() - mStartTime;
-            if (diff >= MIN_SHOW_TIME || mStartTime == 1) {
+            if (diff >= MIN_SHOW_TIME || mStartTime == -1) {
                 showRecycler(true);
             } else {
                 if (!mPostedShow) {
-                    mRecyclerContainer.postDelayed(mDelayedShow, MIN_SHOW_TIME - diff);
+                    mHandler.postDelayed(mDelayedShow, MIN_SHOW_TIME - diff);
                     mPostedShow = true;
                 }
             }
         } else {
             mStartTime = -1;
             mDismissed = false;
-            mRecyclerContainer.removeCallbacks(mDelayedShow);
-            //if (!mPostedHide) {
-                mRecyclerContainer.postDelayed(mDelayedHide, MIN_DELAY);
+            mPostedShow = false;
+            mHandler.removeCallbacks(mDelayedShow);
+            if (!mPostedHide) {
+                mHandler.postDelayed(mDelayedHide, MIN_DELAY);
                 mPostedHide = true;
-            //}
+            }
         }
     }
 
