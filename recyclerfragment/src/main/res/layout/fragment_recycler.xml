@@ -7,7 +7,7 @@
     android:layout_height="match_parent">
 
     <ProgressBar
-        android:id="@+id/progress"
+        android:id="@id/progress"
         style="?android:progressBarStyleLarge"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -16,12 +16,12 @@
         tools:visibility="visible"/>
 
     <FrameLayout
-        android:id="@+id/recycler_container"
+        android:id="@id/recycler_container"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
         <TextView
-            android:id="@+id/empty"
+            android:id="@id/empty"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:gravity="center"
@@ -31,7 +31,7 @@
             tools:visibility="visible"/>
 
         <android.support.v7.widget.RecyclerView
-            android:id="@+id/recycler"
+            android:id="@id/recycler"
             android:layout_width="match_parent"
             android:layout_height="match_parent"/>
     </FrameLayout>

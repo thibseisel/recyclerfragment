@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <item name="recycler" type="id"/>
+    <item name="recycler_container" type="id"/>
+    <item name="progress" type="id"/>
+    <item name="empty" type="id"/>
+</resources>

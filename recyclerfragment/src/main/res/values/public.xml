@@ -2,4 +2,5 @@
     <public name="recycler_container" type="id"/>
     <public name="recycler" type="id"/>
     <public name="progress" type="id"/>
+    <public name="empty" type="id" />
 </resources>
