@@ -2,10 +2,10 @@ package fr.nihilus.recyclerfragment;
 
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.RecyclerView.AdapterDataObserver;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,12 +20,13 @@ import static android.support.v7.widget.RecyclerView.ViewHolder;
  * onCreateView.
  * To do this, your view hierarchy <em>must</em> contain the following views :
  * <ul>
- * <li>a RecyclerView with id "@android:id/list"</li>
- * <li>any View with id "@android:id/progress"</li>
+ * <li>a RecyclerView with id "@+id/recycler"</li>
+ * <li>any View with id "@+id/progress"</li>
+ * <li>a ViewGroup with id "@+id/recycler_container"</li>
  * </ul>
  * <p>Optionnaly, your view hierarchy can contain another view object of any type to display
  * when the recycler view is empty.
- * This empty view must have an id "@android:id/empty". Note that when an empty view is present,
+ * This empty view must have an id "@+id/empty". Note that when an empty view is present,
  * the recycler view will be hidden when there is no data to display.
  */
 public class RecyclerFragment extends Fragment {
@@ -37,7 +38,6 @@ public class RecyclerFragment extends Fragment {
     private RecyclerView mRecycler;
     private View mProgress;
     private View mRecyclerContainer;
-    private RecyclerView.LayoutManager mManager;
     private View mEmptyView;
 
     private long mStartTime = -1;
@@ -90,12 +90,12 @@ public class RecyclerFragment extends Fragment {
     @NonNull
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
+                             @Nullable Bundle savedInstanceState) {
         return inflater.inflate(R.layout.fragment_recycler, container, false);
     }
 
     @Override
-    public void onViewCreated(View view, Bundle savedInstanceState) {
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         ensureRecycler();
     }
@@ -115,11 +115,9 @@ public class RecyclerFragment extends Fragment {
      *
      * @param manager the layout manager used to lay out items in this fragment's recycler view
      */
-    public void setLayoutManager(RecyclerView.LayoutManager manager) {
-        mManager = manager;
-        if (mRecycler != null) {
-            mRecycler.setLayoutManager(manager);
-        }
+    public void setLayoutManager(@Nullable RecyclerView.LayoutManager manager) {
+        ensureRecycler();
+        mRecycler.setLayoutManager(manager);
     }
 
     private void setEmptyShown(boolean shown) {
@@ -202,7 +200,7 @@ public class RecyclerFragment extends Fragment {
      *
      * @param adapter the adapter to be associated with this fragment's RecyclerView
      */
-    public void setAdapter(Adapter<? extends ViewHolder> adapter) {
+    public void setAdapter(@Nullable Adapter<? extends ViewHolder> adapter) {
         boolean hadAdapter = mAdapter != null;
 
         if (hadAdapter) {
@@ -265,8 +263,6 @@ public class RecyclerFragment extends Fragment {
 
         mRecycler = (RecyclerView) rawRecycler;
         mEmptyView = root.findViewById(R.id.empty);
-
-        setLayoutManager(mManager);
 
         if (mAdapter != null) {
             // If adapter is already provided, show the recycler view
