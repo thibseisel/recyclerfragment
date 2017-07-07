@@ -21,13 +21,13 @@ import static android.support.v7.widget.RecyclerView.ViewHolder;
  * onCreateView.
  * To do this, your view hierarchy <em>must</em> contain the following views :
  * <ul>
- * <li>a RecyclerView with id "@+id/recycler"</li>
- * <li>any View with id "@+id/progress"</li>
- * <li>a ViewGroup with id "@+id/recycler_container"</li>
+ * <li>a RecyclerView with id "@id/recycler"</li>
+ * <li>any View with id "@id/progress"</li>
+ * <li>a ViewGroup with id "@id/recycler_container"</li>
  * </ul>
  * <p>Optionnaly, your view hierarchy can contain another view object of any type to display
  * when the recycler view is empty.
- * This empty view must have an id "@+id/empty". Note that when an empty view is present,
+ * This empty view must have an id "@id/empty". Note that when an empty view is present,
  * the recycler view will be hidden when there is no data to display.
  */
 public class RecyclerFragment extends Fragment {
