@@ -135,6 +135,7 @@ public class RecyclerFragment extends Fragment {
         mPostedHide = mPostedShow = false;
         mRecycler = null;
         mRecyclerContainer = mEmptyView = mProgress = null;
+        mAdapter.unregisterAdapterDataObserver(mEmptyStateObserver);
         super.onDestroyView();
     }
 
