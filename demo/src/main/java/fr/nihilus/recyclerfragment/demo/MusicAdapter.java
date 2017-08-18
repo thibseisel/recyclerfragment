@@ -74,10 +74,6 @@ public class MusicAdapter extends RecyclerView.Adapter<MusicAdapter.SongHolder> 
     }
 
     public Cursor swapCursor(Cursor newCursor) {
-        if (newCursor == mCursor) {
-            return newCursor;
-        }
-
         Cursor oldCursor = mCursor;
         mCursor = newCursor;
         if (newCursor != null) {
