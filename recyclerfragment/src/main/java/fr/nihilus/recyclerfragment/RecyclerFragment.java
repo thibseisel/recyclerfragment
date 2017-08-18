@@ -5,6 +5,7 @@ import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.RecyclerView.AdapterDataObserver;
 import android.view.LayoutInflater;
@@ -93,9 +94,10 @@ public class RecyclerFragment extends Fragment {
 
     /**
      * <p>Called to have this RecyclerFragment instanciate its view hierarchy.</p>
-     * <p>The default implementation creates a layout containing a RecyclerView,
-     * a ProgressBar and a TextView with a simple empty text.
+     * <p>The default implementation creates a layout containing a RecyclerView and a ProgressBar.
      * You can override this method to define your own view hierarchy for this fragment.
+     * If you include a view with id "@id/empty", its visibility will automatically change depending
+     * on the empty state of the adapter.
      * </p>
      *
      * @return the view for this fragment UI
@@ -126,7 +128,8 @@ public class RecyclerFragment extends Fragment {
 
     /**
      * Sets the RecyclerView.LayoutManager object for the RecyclerView hosted by this fragment.
-     * Note that if you don't specify the layout manager no data will be displayed.
+     * Note that if you don't specify the layout manager, a vertical {@link LinearLayoutManager}
+     * will be used by default.
      *
      * @param manager the layout manager used to lay out items in this fragment's recycler view
      */
