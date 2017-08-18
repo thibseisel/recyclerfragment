@@ -57,27 +57,12 @@ public class RecyclerFragment extends Fragment {
         }
 
         @Override
-        public void onItemRangeChanged(int positionStart, int itemCount) {
-            onChanged();
-        }
-
-        @Override
-        public void onItemRangeChanged(int positionStart, int itemCount, Object payload) {
-            onChanged();
-        }
-
-        @Override
         public void onItemRangeInserted(int positionStart, int itemCount) {
             onChanged();
         }
 
         @Override
         public void onItemRangeRemoved(int positionStart, int itemCount) {
-            onChanged();
-        }
-
-        @Override
-        public void onItemRangeMoved(int fromPosition, int toPosition, int itemCount) {
             onChanged();
         }
     };
@@ -151,13 +136,11 @@ public class RecyclerFragment extends Fragment {
     }
 
     private void setEmptyShown(boolean shown) {
-        if (mEmptyView == null) {
+        // Show/hide empty view and recycler only if empty view is defined
+        if (mEmptyView != null) {
             mRecycler.setVisibility(shown ? View.GONE : View.VISIBLE);
-            return;
+            mEmptyView.setVisibility(shown ? View.VISIBLE : View.GONE);
         }
-
-        mRecycler.setVisibility(shown ? View.GONE : View.VISIBLE);
-        mEmptyView.setVisibility(shown ? View.VISIBLE : View.GONE);
     }
 
     /**
@@ -301,10 +284,12 @@ public class RecyclerFragment extends Fragment {
             Adapter<? extends ViewHolder> adapter = mAdapter;
             mAdapter = null;
             setAdapter(adapter);
+            setEmptyShown(adapter.getItemCount() == 0);
         } else {
             // We are starting without an adapter, so assume we won't
             // have our data right away and start with the progress indicator.
             setRecyclerShown(false);
+            setEmptyShown(false);
         }
     }
 }
