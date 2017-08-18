@@ -7,9 +7,9 @@
             android:summary="Load static data into RecyclerFragment"
             android:title="Static data">
             <intent
+                android:data="fr.nihilus.recyclerfragment.demo.loading.StaticDataFragment"
                 android:targetClass="fr.nihilus.recyclerfragment.demo.HostActivity"
-                android:targetPackage="fr.nihilus.recyclerfragment.demo"
-                android:data="fr.nihilus.recyclerfragment.demo.loading.StaticDataFragment"/>
+                android:targetPackage="fr.nihilus.recyclerfragment.demo"/>
         </Preference>
 
         <Preference
@@ -29,33 +29,16 @@
                 android:targetClass="fr.nihilus.recyclerfragment.demo.HostActivity"
                 android:targetPackage="fr.nihilus.recyclerfragment.demo"/>
         </Preference>
-
-        <Preference
-            android:summary="Show empty state when there's no data to display"
-            android:title="Empty dataset">
-            <intent
-                android:data="fr.nihilus.recyclerfragment.demo.loading.EmptyFragment"
-                android:targetClass="fr.nihilus.recyclerfragment.demo.HostActivity"
-                android:targetPackage="fr.nihilus.recyclerfragment.demo"/>
-        </Preference>
     </PreferenceCategory>
 
     <PreferenceCategory android:title="Custom layout">
         <Preference
-            android:summary="A custom view to display an empty state"
-            android:title="Custom empty dataset">
+            android:summary="Show a custom view when there's no data to display"
+            android:title="Empty dataset">
             <intent
                 android:data="fr.nihilus.recyclerfragment.demo.custom.CustomEmptyFragment"
                 android:targetClass="fr.nihilus.recyclerfragment.demo.HostActivity"
                 android:targetPackage="fr.nihilus.recyclerfragment.demo"/>
         </Preference>
     </PreferenceCategory>
-
-    <!--<PreferenceCategory android:title="List items">
-
-        <Preference
-            android:summary="An item composed of a single line of text and an icon"
-            android:title="Single line item"/>
-
-    </PreferenceCategory> -->
 </PreferenceScreen>

@@ -9,9 +9,6 @@ import android.support.v4.app.ListFragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
-import android.util.Log;
-
-import static android.content.ContentValues.TAG;
 
 public class MusicListFragment extends ListFragment implements LoaderManager.LoaderCallbacks<Cursor> {
 
@@ -30,7 +27,6 @@ public class MusicListFragment extends ListFragment implements LoaderManager.Loa
 
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
-        Log.d(TAG, "onCreateLoader: start loading.");
         String[] projection = {Media._ID, Media.TITLE, Media.ALBUM_ID};
         return new CursorLoader(getContext(), Media.EXTERNAL_CONTENT_URI, projection,
                 null, null, Media.DEFAULT_SORT_ORDER);
@@ -42,7 +38,6 @@ public class MusicListFragment extends ListFragment implements LoaderManager.Loa
         delayer.postDelayed(new Runnable() {
             @Override
             public void run() {
-                Log.d(TAG, "onLoadFinished: loading finished !");
                 mAdapter.swapCursor(data);
                 setListShown(true);
             }
@@ -51,7 +46,6 @@ public class MusicListFragment extends ListFragment implements LoaderManager.Loa
 
     @Override
     public void onLoaderReset(Loader<Cursor> loader) {
-        Log.d(TAG, "onLoaderReset: loader has been reset.");
         mAdapter.swapCursor(null);
     }
 }
