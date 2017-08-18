@@ -8,7 +8,7 @@ the framework's `ListFragment` with additional features.
 The library is available through jCenter.
 You just have to include the dependency in your build.gradle file :
 
-```groovy
+```gradle
 dependencies {
     compile 'fr.nihilus:recyclerfragment:x.y.z'
 }
