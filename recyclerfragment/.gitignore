@@ -1,1 +1,15 @@
+*.iml
+.gradle
+/local.properties
+/.idea/workspace.xml
+/.idea/libraries
+/.idea/icon.png
+/.idea/icon_dark.png
+/.idea/misc.xml
+/.idea/markdown-navigator
+/.idea/markdown-navigator.xml
+.DS_Store
 /build
+/captures
+.externalNativeBuild
+/projectFilesBackup
