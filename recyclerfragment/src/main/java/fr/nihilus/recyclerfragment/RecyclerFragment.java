@@ -24,7 +24,7 @@ import static android.support.v7.widget.RecyclerView.ViewHolder;
  * <ul>
  * <li>a RecyclerView with id "@id/recycler"</li>
  * <li>any View with id "@id/progress"</li>
- * <li>a ViewGroup with id "@id/recycler_container"</li>
+ * <li>any ViewGroup with id "@id/recycler_container"</li>
  * </ul>
  * <p>Optionnaly, your view hierarchy can contain another view object of any type to display
  * when the recycler view is empty.
@@ -73,7 +73,7 @@ public class RecyclerFragment extends Fragment {
         public void run() {
             mPostedShow = false;
             mStartTime = -1;
-            showRecycler(true);
+            setRecyclerShownImmediate(true);
         }
     };
 
@@ -83,7 +83,7 @@ public class RecyclerFragment extends Fragment {
             mPostedHide = false;
             if (!mDismissed) {
                 mStartTime = System.currentTimeMillis();
-                showRecycler(false);
+                setRecyclerShownImmediate(false);
             }
         }
     };
@@ -97,8 +97,7 @@ public class RecyclerFragment extends Fragment {
      * <p>The default implementation creates a layout containing a RecyclerView and a ProgressBar.
      * You can override this method to define your own view hierarchy for this fragment.
      * If you include a view with id "@id/empty", its visibility will automatically change depending
-     * on the empty state of the adapter.
-     * </p>
+     * on the empty state of the adapter.</p>
      *
      * @return the view for this fragment UI
      */
@@ -128,8 +127,8 @@ public class RecyclerFragment extends Fragment {
 
     /**
      * Sets the RecyclerView.LayoutManager object for the RecyclerView hosted by this fragment.
-     * Note that if you don't specify the layout manager, a vertical {@link LinearLayoutManager}
-     * will be used by default.
+     * If you don't specify a layout manager, the default implementation will
+     * use a vertical {@link LinearLayoutManager}.
      *
      * @param manager the layout manager used to lay out items in this fragment's recycler view
      */
@@ -162,10 +161,13 @@ public class RecyclerFragment extends Fragment {
      * <p>Control whether the recycler view is beeing displayed.
      * You can make it not displayed if you are waiting for the initial data to be available.
      * During this time an indeterminate progress indicator will be shown instead.</p>
-     * <p>The default implementation will start with the recycler view hidden, showing it only once
-     * an adapter is given with etAdapter(Adapter).</p>
+     * <p>Note that the visibility change of the recycler view is not immediate: when hiding the
+     * recycler view by passing false to this method {@code false},
+     * the progress indicator will be shown only if setRecyclerShown(true) is called after
+     * a minimum (perceivable) delay. Also, if the progress indicator is shown it stays visible a
+     * sufficient amount of time before changing back to a recycler view to avoid "flashes" in the UI.</p>
      *
-     * @param shown if {@code true} the recycler view is shown, if {@code false} the progress indicator.
+     * @param shown if {@code true} the recycler view is shown, if {@code false} the progress indicator
      */
     public void setRecyclerShown(boolean shown) {
         ensureRecycler();
@@ -176,7 +178,7 @@ public class RecyclerFragment extends Fragment {
             mHandler.removeCallbacks(mDelayedHide);
             long diff = System.currentTimeMillis() - mStartTime;
             if (diff >= MIN_SHOW_TIME || mStartTime == -1) {
-                showRecycler(true);
+                setRecyclerShownImmediate(true);
             } else {
                 if (!mPostedShow) {
                     mHandler.postDelayed(mDelayedShow, MIN_SHOW_TIME - diff);
@@ -195,7 +197,7 @@ public class RecyclerFragment extends Fragment {
         }
     }
 
-    private void showRecycler(boolean shown) {
+    private void setRecyclerShownImmediate(boolean shown) {
         if (shown) {
             mRecyclerContainer.setVisibility(View.VISIBLE);
             mProgress.setVisibility(View.GONE);

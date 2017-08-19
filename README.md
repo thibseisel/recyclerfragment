@@ -76,7 +76,79 @@ public class MyFragment extends RecyclerFragment {
 Note that the progress indicator won't we shown if your data is loaded
 in less than 500 ms. This is an expected behavior: similarly to
 `ContentLoadingProgressBar`, the progress indicator is only shown if it
-will be displayed a sifficient amount of time to avoid UI "flashes".
+will be displayed a sufficient amount of time to avoid UI "flashes".
 
 # Using a custom layout #
 
+You may need to customize the layout of RecyclerFragment.
+All you have to do is to override `onCreateView` and inflate
+your custom view hierarchy. Howether, your layout has to meet
+the following criterias:
+- It must contain a `RecyclerView` with id `@id/recycler`
+- It must contain any `View` with id `@id/progress` to be displayed
+when the `RecyclerView` is hidden by `setRecyclerShown(false)`.
+
+You may optionally specify a `View` to be automatically displayed
+in place of the `RecyclerView` when the adapter is empty:
+just mark it with the id `@id/empty`.
+
+The following is an example of custom layout for RecyclerFragment:
+
+### fragment_custom.xml ###
+```xml
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout android:id="@+id/parent"
+             xmlns:android="http://schemas.android.com/apk/res/android"
+             android:layout_width="match_parent"
+             android:layout_height="match_parent">
+
+    <ProgressBar
+        android:id="@id/progress"
+        style="?android:progressBarStyleLarge"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:visibility="gone"/>
+
+    <FrameLayout
+        android:id="@id/recycler_container"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@id/recycler"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:clipToPadding="false"
+            android:paddingTop="8dp"
+            android:paddingBottom="8dp"/>
+
+        <TextView
+            android:id="@id/empty"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="No items to display."
+            android:textAppearance="@style/TextAppearance.AppCompat.Large"
+            android:layout_gravity="center"/>
+    </FrameLayout>
+</FrameLayout>
+```
+
+### MyFragment.java ###
+
+```java
+public class MyFragment extends RecyclerFragment {
+
+    @NonNull
+    @Override
+    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container,
+                             @Nullable Bundle savedInstanceState) {
+        return inflater.inflate(R.layout.fragment_custom, container, false);
+    }
+}
+```
+
+Don't forget to set your LayoutManager in XML or via
+`setLayoutManager(RecyclerView.LayoutManager)`,
+as only the default implementation uses a `LinearLayoutManager` when
+no other is provided.
