@@ -52,7 +52,8 @@ public class RecyclerFragment extends Fragment {
     private final AdapterDataObserver mEmptyStateObserver = new AdapterDataObserver() {
         @Override
         public void onChanged() {
-            if (isVisible()) {
+            if (mRecycler != null) {
+                // Show / hide the empty view only when fragment is visible
                 setEmptyShown(mAdapter != null && mAdapter.getItemCount() == 0);
             }
         }
