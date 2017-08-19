@@ -15,7 +15,7 @@ buildscript {
 }
 
 ext {
-    supportLibVersion = '25.4.0'
+    supportLibVersion = '26.0.1'
     junitVersion = '4.12'
     glideVersion = '3.8.0'
 }

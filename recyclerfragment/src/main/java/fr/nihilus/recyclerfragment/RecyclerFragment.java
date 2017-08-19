@@ -19,14 +19,14 @@ import static android.support.v7.widget.RecyclerView.ViewHolder;
  * <p>A fragment that hosts a RecyclerView to display a set of items.</p>
  * <p>RecyclerFragment has a default layout that consists of a single RecyclerView.
  * Howether if yo desire, you can customize the fragment layout by returning your own view hierarchy from
- * onCreateView.
+ * {@link #onCreateView(LayoutInflater, ViewGroup, Bundle)}.
  * To do this, your view hierarchy <em>must</em> contain the following views :
  * <ul>
  * <li>a RecyclerView with id "@id/recycler"</li>
  * <li>any View with id "@id/progress"</li>
  * <li>any ViewGroup with id "@id/recycler_container"</li>
  * </ul>
- * <p>Optionnaly, your view hierarchy can contain another view object of any type to display
+ * <p>Optionally, your view hierarchy can contain another view object of any type to display
  * when the recycler view is empty.
  * This empty view must have an id "@id/empty". Note that when an empty view is present,
  * the recycler view will be hidden when there is no data to display.
