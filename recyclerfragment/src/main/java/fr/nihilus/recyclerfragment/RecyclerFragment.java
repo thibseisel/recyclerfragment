@@ -5,7 +5,6 @@ import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.RecyclerView.AdapterDataObserver;
 import android.view.LayoutInflater;
@@ -129,7 +128,7 @@ public class RecyclerFragment extends Fragment {
     /**
      * Sets the RecyclerView.LayoutManager object for the RecyclerView hosted by this fragment.
      * If you don't specify a layout manager, the default implementation will
-     * use a vertical {@link LinearLayoutManager}.
+     * use a vertical LinearLayoutManager.
      *
      * @param manager the layout manager used to lay out items in this fragment's recycler view
      */
