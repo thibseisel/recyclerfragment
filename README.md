@@ -1,6 +1,6 @@
 [ ![JCenter](https://api.bintray.com/packages/nihilus/android/recyclerfragment/images/download.svg) ](https://bintray.com/nihilus/android/recyclerfragment/_latestVersion)
 
-RecyclerFragment is a small Android library that allow you to easily
+RecyclerFragment is a small Android library that allow you to
 display `RecyclerView` data in a `Fragment`. Easy to use, it is similar to
 the framework's `ListFragment` with additional features.
 
@@ -16,7 +16,7 @@ dependencies {
 
 # Features #
 
-- Fragment with a `RecyclerView` and a hidable `ProgressBar` out of the box
+- Fragment with a `RecyclerView` and a hideable `ProgressBar` out of the box
 - Ability to show the `ProgressBar` when waiting for asynchronous data
 - Customizable layout
 - Support for an "empty view" to be displayed automatically in place
@@ -152,3 +152,6 @@ Don't forget to set your LayoutManager in XML or via
 `setLayoutManager(RecyclerView.LayoutManager)`,
 as only the default implementation uses a `LinearLayoutManager` when
 no other is provided.
+
+# License #
+MIT
