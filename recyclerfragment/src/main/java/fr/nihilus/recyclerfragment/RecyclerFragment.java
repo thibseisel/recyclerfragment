@@ -30,6 +30,7 @@ import static android.support.v7.widget.RecyclerView.ViewHolder;
  * This empty view must have an id "@id/empty". Note that when an empty view is present,
  * the recycler view will be hidden when there is no data to display.
  */
+@SuppressWarnings("unused")
 public class RecyclerFragment extends Fragment {
     private static final String TAG = "RecyclerFragment";
     private static final int MIN_DELAY = 500;
@@ -47,6 +48,7 @@ public class RecyclerFragment extends Fragment {
     private boolean mPostedHide = false;
     private boolean mPostedShow = false;
     private boolean mDismissed = false;
+    private boolean mRegistered = false;
 
     private final AdapterDataObserver mEmptyStateObserver = new AdapterDataObserver() {
         @Override
@@ -167,7 +169,9 @@ public class RecyclerFragment extends Fragment {
      * a minimum (perceivable) delay. Also, if the progress indicator is shown it stays visible a
      * sufficient amount of time before changing back to a recycler view to avoid "flashes" in the UI.</p>
      *
-     * @param shown if {@code true} the recycler view is shown, if {@code false} the progress indicator
+     * @param shown if {@code true} the recycler view is shown,
+     *              if {@code false} the progress indicator
+     * @throws IllegalStateException if called before content view has been created
      */
     public void setRecyclerShown(boolean shown) {
         ensureRecycler();
@@ -226,11 +230,13 @@ public class RecyclerFragment extends Fragment {
         if (hadAdapter) {
             // Stop observing the previous adapter
             mAdapter.unregisterAdapterDataObserver(mEmptyStateObserver);
+            mRegistered = false;
         }
 
-        if (adapter != null) {
+        if (adapter != null && !mRegistered) {
             // Start observing the new adapter
             adapter.registerAdapterDataObserver(mEmptyStateObserver);
+            mRegistered = true;
         }
 
         mAdapter = adapter;

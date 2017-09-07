@@ -26,15 +26,21 @@ public class StaticDataFragment extends RecyclerFragment {
     };
 
     @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+        StaticAdapter adapter = new StaticAdapter(MANGAS);
+        setAdapter(adapter);
+    }
+
+    @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
         setLayoutManager(new LinearLayoutManager(getContext()));
-        DividerItemDecoration dividers = new DividerItemDecoration(getContext(), DividerItemDecoration.VERTICAL);
+        DividerItemDecoration dividers = new DividerItemDecoration(getContext(),
+                DividerItemDecoration.VERTICAL);
         getRecyclerView().addItemDecoration(dividers);
-
-        StaticAdapter adapter = new StaticAdapter(MANGAS);
-        setAdapter(adapter);
     }
 
     private static class StaticAdapter extends RecyclerView.Adapter<StaticHolder> {

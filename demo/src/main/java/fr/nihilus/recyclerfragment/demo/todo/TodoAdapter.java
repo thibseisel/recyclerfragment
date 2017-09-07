@@ -59,7 +59,9 @@ class TodoAdapter extends RecyclerView.Adapter<TodoAdapter.TodoHolder> {
     void restoreState(Bundle savedState) {
         List<Todo> todos = savedState.getParcelableArrayList(KEY_TODOS);
         if (todos != null) {
+            mItems.clear();
             mItems.addAll(todos);
+            notifyItemRangeInserted(0, mItems.size());
         }
     }
 
