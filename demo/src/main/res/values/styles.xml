@@ -17,4 +17,99 @@
 
     <style name="AppTheme.PopupTheme" parent="ThemeOverlay.AppCompat.Light"/>
 
+    <style name="Nihilus">
+        <!-- Styles namespace -->
+    </style>
+
+    <!-- Style to be applied to lists to add padding -->
+    <style name="Nihilus.List">
+        <item name="android:paddingTop">8dp</item>
+        <item name="android:paddingBottom">8dp</item>
+        <item name="android:clipToPadding">false</item>
+    </style>
+
+    <style name="Nihilus.ListItem">
+        <!-- Base style for list items -->
+    </style>
+
+    <!-- Style of the root item in a list -->
+    <style name="Nihilus.ListItem.Parent">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:minHeight">72dp</item>
+        <item name="android:paddingLeft">16dp</item>
+        <item name="android:paddingRight">16dp</item>
+    </style>
+
+    <style name="Nihilus.ListItem.Parent.SingleLine">
+        <item name="android:minHeight">48dp</item>
+    </style>
+
+    <style name="Nihilus.ListItem.Parent.ThreeLines">
+        <item name="android:minHeight">88dp</item>
+    </style>
+
+    <style name="Nihilus.ListItem.Icon">
+        <item name="android:layout_width">24dp</item>
+        <item name="android:layout_height">24dp</item>
+        <item name="android:layout_centerVertical">true</item>
+    </style>
+
+    <style name="Nihilus.ListItem.Icon.Start">
+        <item name="android:layout_marginRight">36dp</item>
+    </style>
+
+    <style name="Nihilus.ListItem.Icon.End">
+        <item name="android:layout_marginLeft">16dp</item>
+    </style>
+
+    <style name="Nihilus.ListItem.Avatar">
+        <item name="android:layout_width">40dp</item>
+        <item name="android:layout_height">40dp</item>
+        <item name="android:layout_centerVertical">true</item>
+    </style>
+
+    <style name="Nihilus.ListItem.Avatar.Start">
+        <item name="android:layout_marginRight">16dp</item>
+    </style>
+
+    <style name="Nihilus.ListItem.Avatar.End">
+        <item name="android:layout_marginLeft">16dp</item>
+    </style>
+
+    <style name="Nihilus.ListItem.TextContainer">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:orientation">vertical</item>
+        <item name="android:layout_centerVertical">true</item>
+        <item name="android:layout_alignWithParentIfMissing">true</item>
+        <item name="android:gravity">center_vertical</item>
+    </style>
+
+    <style name="Nihilus.ListItem.Title">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textAppearance">@style/TextAppearance.AppCompat.Subhead</item>
+        <item name="android:textSize">16sp</item>
+        <item name="android:ellipsize">end</item>
+        <item name="android:maxLines">1</item>
+        <item name="android:layout_centerVertical">true</item>
+    </style>
+
+    <style name="Nihilus.ListItem.Subtitle">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textAppearance">@style/TextAppearance.AppCompat.Small</item>
+        <item name="android:ellipsize">end</item>
+        <item name="android:maxLines">1</item>
+    </style>
+
+    <style name="Nihilus.ListItem.Body">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textAppearance">@style/TextAppearance.AppCompat.Body1</item>
+        <item name="android:ellipsize">end</item>
+        <item name="android:maxLines">2</item>
+    </style>
+
 </resources>
