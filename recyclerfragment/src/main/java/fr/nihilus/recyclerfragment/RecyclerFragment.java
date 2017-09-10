@@ -227,7 +227,7 @@ public class RecyclerFragment extends Fragment {
     public void setAdapter(@Nullable Adapter<? extends ViewHolder> adapter) {
         boolean hadAdapter = mAdapter != null;
 
-        if (hadAdapter) {
+        if (hadAdapter && mRegistered) {
             // Stop observing the previous adapter
             mAdapter.unregisterAdapterDataObserver(mEmptyStateObserver);
             mRegistered = false;
