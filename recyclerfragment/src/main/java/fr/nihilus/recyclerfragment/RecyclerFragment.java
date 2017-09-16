@@ -48,7 +48,7 @@ public class RecyclerFragment extends Fragment {
     private boolean mPostedHide = false;
     private boolean mPostedShow = false;
     private boolean mDismissed = false;
-    private boolean mRegistered = false;
+    private boolean mObserverRegistered = false;
 
     private final AdapterDataObserver mEmptyStateObserver = new AdapterDataObserver() {
         @Override
@@ -118,12 +118,13 @@ public class RecyclerFragment extends Fragment {
 
     @Override
     public void onDestroyView() {
+        unregisterEmptyStateObserver(mAdapter);
         mHandler.removeCallbacks(mDelayedShow);
         mHandler.removeCallbacks(mDelayedHide);
         mPostedHide = mPostedShow = false;
         mRecycler = null;
         mRecyclerContainer = mEmptyView = mProgress = null;
-        mAdapter.unregisterAdapterDataObserver(mEmptyStateObserver);
+
         super.onDestroyView();
     }
 
@@ -144,6 +145,20 @@ public class RecyclerFragment extends Fragment {
         if (mEmptyView != null) {
             mRecycler.setVisibility(shown ? View.GONE : View.VISIBLE);
             mEmptyView.setVisibility(shown ? View.VISIBLE : View.GONE);
+        }
+    }
+
+    private void registerEmptyStateObserver(Adapter<? extends ViewHolder> adapter) {
+        if (adapter != null && !mObserverRegistered) {
+            adapter.registerAdapterDataObserver(mEmptyStateObserver);
+            mObserverRegistered = true;
+        }
+    }
+
+    private void unregisterEmptyStateObserver(Adapter<? extends ViewHolder> adapter) {
+        if (adapter != null && mObserverRegistered) {
+            adapter.unregisterAdapterDataObserver(mEmptyStateObserver);
+            mObserverRegistered = false;
         }
     }
 
@@ -227,17 +242,8 @@ public class RecyclerFragment extends Fragment {
     public void setAdapter(@Nullable Adapter<? extends ViewHolder> adapter) {
         boolean hadAdapter = mAdapter != null;
 
-        if (hadAdapter && mRegistered) {
-            // Stop observing the previous adapter
-            mAdapter.unregisterAdapterDataObserver(mEmptyStateObserver);
-            mRegistered = false;
-        }
-
-        if (adapter != null && !mRegistered) {
-            // Start observing the new adapter
-            adapter.registerAdapterDataObserver(mEmptyStateObserver);
-            mRegistered = true;
-        }
+        unregisterEmptyStateObserver(mAdapter);
+        registerEmptyStateObserver(adapter);
 
         mAdapter = adapter;
         if (mRecycler != null) {

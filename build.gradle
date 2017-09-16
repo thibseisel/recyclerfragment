@@ -18,6 +18,7 @@ ext {
     supportLibVersion = '26.0.2'
     junitVersion = '4.12'
     glideVersion = '3.8.0'
+    testRuleVersion = '1.0.0'
 }
 
 allprojects {
