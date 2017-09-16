@@ -4,6 +4,8 @@ RecyclerFragment is a small Android library that allow you to
 display `RecyclerView` data in a `Fragment`. Easy to use, it is similar to
 the framework's `ListFragment` with additional features.
 
+![](img/todo-demo.gif)
+
 # Download #
 The library is available through jCenter.
 You just have to include the dependency in your build.gradle file :
