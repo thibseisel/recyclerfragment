@@ -73,16 +73,15 @@ public class MusicAdapter extends RecyclerView.Adapter<MusicAdapter.SongHolder> 
         return RecyclerView.NO_ID;
     }
 
-    public Cursor swapCursor(Cursor newCursor) {
-        Cursor oldCursor = mCursor;
+    public void swapCursor(Cursor newCursor) {
         mCursor = newCursor;
         if (newCursor != null) {
             mColId = newCursor.getColumnIndexOrThrow(MediaStore.Audio.Media._ID);
             mColTitle = newCursor.getColumnIndexOrThrow(MediaStore.Audio.Media.TITLE);
             mColAlbumId = newCursor.getColumnIndexOrThrow(MediaStore.Audio.Media.ALBUM_ID);
         }
+
         notifyDataSetChanged();
-        return oldCursor;
     }
 
     static class SongHolder extends RecyclerView.ViewHolder {
@@ -91,8 +90,8 @@ public class MusicAdapter extends RecyclerView.Adapter<MusicAdapter.SongHolder> 
 
         SongHolder(View itemView) {
             super(itemView);
-            albumArt = (ImageView) itemView.findViewById(R.id.art);
-            title = (TextView) itemView.findViewById(R.id.title);
+            albumArt = itemView.findViewById(R.id.art);
+            title = itemView.findViewById(R.id.title);
         }
     }
 }

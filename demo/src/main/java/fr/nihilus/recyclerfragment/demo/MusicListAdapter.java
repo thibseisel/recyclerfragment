@@ -55,8 +55,8 @@ class MusicListAdapter extends CursorAdapter {
 
         ViewHolder(View itemView) {
             this.itemView = itemView;
-            albumArt = (ImageView) itemView.findViewById(R.id.art);
-            title = (TextView) itemView.findViewById(R.id.title);
+            albumArt = itemView.findViewById(R.id.art);
+            title = itemView.findViewById(R.id.title);
         }
     }
 }

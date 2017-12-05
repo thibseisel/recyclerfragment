@@ -16,7 +16,7 @@ public class CustomEmptyFragment extends AsynchronousLoadingFragment {
 
     @NonNull
     @Override
-    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container,
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
         // Inflate a custom view that includes a TextView to show when empty
         return inflater.inflate(R.layout.fragment_custom_empty, container, false);

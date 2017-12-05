@@ -6,8 +6,8 @@ group = 'fr.nihilus'
 version = '1.1.2'
 
 android {
-    compileSdkVersion 26
-    buildToolsVersion "26.0.1"
+    compileSdkVersion 27
+    buildToolsVersion "27.0.1"
 
     defaultConfig {
         minSdkVersion 14
@@ -25,13 +25,13 @@ android {
 }
 
 dependencies {
-    compile "com.android.support:appcompat-v7:${supportLibVersion}"
-    compile "com.android.support:recyclerview-v7:${supportLibVersion}"
+    implementation "com.android.support:appcompat-v7:${supportLibVersion}"
+    implementation "com.android.support:recyclerview-v7:${supportLibVersion}"
 
-    testCompile "junit:junit:${junitVersion}"
+    implementation "junit:junit:${junitVersion}"
 
-    androidTestCompile "com.21buttons:fragment-test-rule:${testRuleVersion}"
-    androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
+    androidTestImplementation "com.21buttons:fragment-test-rule:${testRuleVersion}"
+    androidTestImplementation('com.android.support.test.espresso:espresso-core:3.0.1', {
         exclude group: 'com.android.support', module: 'support-annotations'
     })
 }
@@ -39,7 +39,7 @@ dependencies {
 def siteUrl = 'https://github.com/thibseisel/recyclerfragment'
 def gitUrl = 'https://github.com/thibseisel/recyclerfragment.git'
 
-Properties localProperties = new Properties();
+Properties localProperties = new Properties()
 localProperties.load(project.rootProject.file('local.properties').newDataInputStream())
 
 bintray {

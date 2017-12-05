@@ -22,7 +22,7 @@ public class TodoListFragment extends RecyclerFragment implements View.OnClickLi
 
     @NonNull
     @Override
-    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container,
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
         return inflater.inflate(R.layout.fragment_todo, container, false);
     }
@@ -53,7 +53,7 @@ public class TodoListFragment extends RecyclerFragment implements View.OnClickLi
     }
 
     @Override
-    public void onSaveInstanceState(Bundle outState) {
+    public void onSaveInstanceState(@NonNull Bundle outState) {
         mAdapter.saveState(outState);
         super.onSaveInstanceState(outState);
     }

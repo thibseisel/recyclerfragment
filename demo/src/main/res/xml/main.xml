@@ -42,6 +42,15 @@
         </Preference>
 
         <Preference
+            android:summary="Show empty view immediately if loading is fast enough"
+            android:title="Fast empty dataset">
+            <intent
+                android:data="fr.nihilus.recyclerfragment.demo.custom.ShortDelayEmptyFragment"
+                android:targetClass="fr.nihilus.recyclerfragment.demo.HostActivity"
+                android:targetPackage="fr.nihilus.recyclerfragment.demo"/>
+        </Preference>
+
+        <Preference
             android:summary="A real-world's example which displays a todo-list in a custom RecyclerFragment"
             android:title="Todo-list">
             <intent
