@@ -1,0 +1,96 @@
+// Defines configuration to upload library artifacts to Bintray.
+
+if (project.hasProperty('bintray.user') && project.hasProperty('bintray.apikey')) {
+
+    apply plugin: 'com.jfrog.bintray'
+    apply plugin: 'com.github.dcendents.android-maven'
+
+    def siteUrl = 'https://github.com/thibseisel/recyclerfragment'
+    def gitUrl = 'https://github.com/thibseisel/recyclerfragment.git'
+
+    bintray {
+        user = project.property('bintray.user')
+        key = project.property('bintray.apikey')
+
+        configurations = ['archives']
+        pkg {
+            repo = 'android'
+            name = project.name
+            desc = 'An Android Fragment that displays a set of items in a RecyclerView.'
+            websiteUrl = siteUrl
+            issueTrackerUrl = siteUrl + '/issues'
+            vcsUrl = gitUrl
+            licenses = ['Apache-2.0']
+            labels = ['android', 'fragment', 'recyclerview']
+            publish = false
+            override = true
+        }
+    }
+
+    install {
+        repositories.mavenInstaller {
+            pom {
+                project {
+                    packaging 'aar'
+                    name 'An Android Fragment that displays a set of items in a RecyclerView.'
+                    url siteUrl
+                    licenses {
+                        license {
+                            name 'The Apache Software License, Version 2.0'
+                            url 'http://www.apache.org.licenses/LICENSE-2.0.txt'
+                        }
+                    }
+                    developers {
+                        developer {
+                            id 'thibseisel'
+                            name 'Thibault Seisel'
+                        }
+                    }
+                    scm {
+                        connection 'https://github.com/thibseisel/recyclerfragment.git'
+                        developerConnection 'https://github.com/thibseisel/recyclerfragment.git'
+                        url siteUrl
+                    }
+                }
+            }
+        }
+    }
+
+    task sourcesJar(type: Jar) {
+        from android.sourceSets.main.java.srcDirs
+        classifier = 'sources'
+    }
+
+    task javadoc(type: Javadoc) {
+        source = android.sourceSets.main.java.srcDirs
+        classpath += project.files(android.getBootClasspath().join(File.separator))
+    }
+
+    task javadocJar(type: Jar, dependsOn: javadoc) {
+        classifier = 'javadoc'
+        from javadoc.destinationDir
+    }
+
+    artifacts {
+        archives javadocJar
+        archives sourcesJar
+    }
+
+    task findConventions {
+        doLast {
+            println project.getConvention()
+        }
+    }
+} else {
+    if (!project.hasProperty('bintray.user')) {
+        logger.warn('Missing Gradle property "bintray.user".')
+    }
+    if (!project.hasProperty('bintray.apikey')) {
+        logger.warn('Missing Gradle property "bintray.apikey".')
+    }
+    logger.warn(
+            "Some required properties relative to Bintray authentication are missing. " +
+            "You won't be able to publish artifacts to Bintray unless you specify them."
+    )
+}
+

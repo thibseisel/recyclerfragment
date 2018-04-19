@@ -1,17 +1,15 @@
 apply plugin: 'com.android.library'
-apply plugin: 'com.jfrog.bintray'
-apply plugin: 'com.github.dcendents.android-maven'
 
 group = 'fr.nihilus'
-version = '1.1.4'
+version = '1.1.5'
 
 android {
     compileSdkVersion 27
-    buildToolsVersion "27.0.2"
+    buildToolsVersion '27.0.3'
 
     defaultConfig {
         minSdkVersion 14
-        targetSdkVersion 26
+        targetSdkVersion 27
         versionCode 1
         versionName project.version
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
@@ -25,94 +23,12 @@ android {
 }
 
 dependencies {
-    implementation "com.android.support:appcompat-v7:${supportLibVersion}"
+    implementation "com.android.support:support-fragment:${supportLibVersion}"
     implementation "com.android.support:recyclerview-v7:${supportLibVersion}"
 
     testImplementation "junit:junit:${junitVersion}"
 
-    androidTestImplementation "com.21buttons:fragment-test-rule:${testRuleVersion}"
-    androidTestImplementation('com.android.support.test.espresso:espresso-core:3.0.1', {
-        exclude group: 'com.android.support', module: 'support-annotations'
-    })
+    androidTestImplementation "com.android.support.test.espresso:espresso-core:$espressoVersion"
 }
 
-def siteUrl = 'https://github.com/thibseisel/recyclerfragment'
-def gitUrl = 'https://github.com/thibseisel/recyclerfragment.git'
-
-Properties localProperties = new Properties()
-localProperties.load(project.rootProject.file('local.properties').newDataInputStream())
-
-bintray {
-    user = localProperties.getProperty('bintray.user')
-    key = localProperties.getProperty('bintray.apikey')
-
-    configurations = ['archives']
-    pkg {
-        repo = 'android'
-        name = project.name
-        desc = 'An Android Fragment that displays a set of items in a RecyclerView.'
-        websiteUrl = siteUrl
-        issueTrackerUrl = siteUrl + '/issues'
-        vcsUrl = gitUrl
-        licenses = ['Apache-2.0']
-        labels = ['android', 'fragment', 'recyclerview']
-        publish = false
-        override = true
-    }
-}
-
-install {
-    repositories.mavenInstaller {
-        pom {
-            project {
-                packaging 'aar'
-                name 'An Android Fragment that displays a set of items in a RecyclerView.'
-                url siteUrl
-                licenses {
-                    license {
-                        name 'The Apache Software License, Version 2.0'
-                        url 'http://www.apache.org.licenses/LICENSE-2.0.txt'
-                    }
-                }
-                developers {
-                    developer {
-                        id 'thibseisel'
-                        name 'Thibault Seisel'
-                    }
-                }
-                scm {
-                    connection 'https://github.com/thibseisel/recyclerfragment.git'
-                    developerConnection 'https://github.com/thibseisel/recyclerfragment.git'
-                    url siteUrl
-                }
-            }
-        }
-    }
-}
-
-task sourcesJar(type: Jar) {
-    from android.sourceSets.main.java.srcDirs
-    classifier = 'sources'
-}
-
-task javadoc(type: Javadoc) {
-    source = android.sourceSets.main.java.srcDirs
-    classpath += project.files(android.getBootClasspath().join(File.separator))
-}
-
-task javadocJar(type: Jar, dependsOn: javadoc) {
-    classifier = 'javadoc'
-    from javadoc.destinationDir
-}
-
-artifacts {
-    archives javadocJar
-    archives sourcesJar
-}
-
-task findConventions {
-    doLast {
-        println project.getConvention()
-    }
-}
-
+apply from: "$rootDir/gradle/publish.gradle"
