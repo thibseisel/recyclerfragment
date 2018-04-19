@@ -2,17 +2,45 @@
 
 if (project.hasProperty('bintray.user') && project.hasProperty('bintray.apikey')) {
 
+    apply plugin: 'maven-publish'
     apply plugin: 'com.jfrog.bintray'
-    apply plugin: 'com.github.dcendents.android-maven'
 
     def siteUrl = 'https://github.com/thibseisel/recyclerfragment'
     def gitUrl = 'https://github.com/thibseisel/recyclerfragment.git'
+
+    publishing {
+        publications {
+            Production(MavenPublication) {
+                artifact("$buildDir/outputs/aar/app-release.aar")
+                groupId
+                artifactId 'recyclerfragment'
+                version project.version
+
+                pom.withXml {
+                    def dependenciesNode = asNode().appendNode('dependencies')
+
+                    // Iterate over the implementation dependencies (we don't want the test ones), adding a <dependency> node for each
+                    configurations.implementation.allDependencies.each {
+                        // Ensure dependencies sucj as fileTree are not included in the pom.
+                        if (it.name != 'unspecified') {
+                            def dependencyNode = dependenciesNode.appendNode('dependency')
+                            dependencyNode.appendNode('groupId', it.group)
+                            dependencyNode.appendNode('artifactId', it.name)
+                            dependencyNode.appendNode('version', it.version)
+                        }
+                    }
+                }
+            }
+        }
+    }
 
     bintray {
         user = project.property('bintray.user')
         key = project.property('bintray.apikey')
 
+        publications = ['Production']
         configurations = ['archives']
+
         pkg {
             repo = 'android'
             name = project.name
@@ -27,60 +55,6 @@ if (project.hasProperty('bintray.user') && project.hasProperty('bintray.apikey')
         }
     }
 
-    install {
-        repositories.mavenInstaller {
-            pom {
-                project {
-                    packaging 'aar'
-                    name 'An Android Fragment that displays a set of items in a RecyclerView.'
-                    url siteUrl
-                    licenses {
-                        license {
-                            name 'The Apache Software License, Version 2.0'
-                            url 'http://www.apache.org.licenses/LICENSE-2.0.txt'
-                        }
-                    }
-                    developers {
-                        developer {
-                            id 'thibseisel'
-                            name 'Thibault Seisel'
-                        }
-                    }
-                    scm {
-                        connection 'https://github.com/thibseisel/recyclerfragment.git'
-                        developerConnection 'https://github.com/thibseisel/recyclerfragment.git'
-                        url siteUrl
-                    }
-                }
-            }
-        }
-    }
-
-    task sourcesJar(type: Jar) {
-        from android.sourceSets.main.java.srcDirs
-        classifier = 'sources'
-    }
-
-    task javadoc(type: Javadoc) {
-        source = android.sourceSets.main.java.srcDirs
-        classpath += project.files(android.getBootClasspath().join(File.separator))
-    }
-
-    task javadocJar(type: Jar, dependsOn: javadoc) {
-        classifier = 'javadoc'
-        from javadoc.destinationDir
-    }
-
-    artifacts {
-        archives javadocJar
-        archives sourcesJar
-    }
-
-    task findConventions {
-        doLast {
-            println project.getConvention()
-        }
-    }
 } else {
     if (!project.hasProperty('bintray.user')) {
         logger.warn('Missing Gradle property "bintray.user".')
