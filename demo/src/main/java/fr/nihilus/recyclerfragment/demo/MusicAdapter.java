@@ -15,9 +15,10 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.bumptech.glide.BitmapRequestBuilder;
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.RequestBuilder;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.bumptech.glide.request.RequestOptions;
 
 public class MusicAdapter extends RecyclerView.Adapter<MusicAdapter.SongHolder> {
 
@@ -28,7 +29,7 @@ public class MusicAdapter extends RecyclerView.Adapter<MusicAdapter.SongHolder> 
     private int mColTitle;
     private int mColAlbumId;
 
-    private final BitmapRequestBuilder<Uri, Bitmap> mGlideRequest;
+    private final RequestBuilder<Bitmap> mGlideRequest;
 
     public MusicAdapter(@NonNull Context context, @Nullable Cursor cursor) {
         mCursor = cursor;
@@ -38,19 +39,20 @@ public class MusicAdapter extends RecyclerView.Adapter<MusicAdapter.SongHolder> 
             mColAlbumId = cursor.getColumnIndexOrThrow(MediaStore.Audio.Media.ALBUM_ID);
         }
 
-        mGlideRequest = Glide.with(context).fromUri().asBitmap()
-                .diskCacheStrategy(DiskCacheStrategy.NONE);
+        mGlideRequest = Glide.with(context).asBitmap()
+                .apply(RequestOptions.diskCacheStrategyOf(DiskCacheStrategy.NONE));
     }
 
+    @NonNull
     @Override
-    public SongHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    public SongHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View itemView = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.music_list_item, parent, false);
         return new SongHolder(itemView);
     }
 
     @Override
-    public void onBindViewHolder(SongHolder holder, int position) {
+    public void onBindViewHolder(@NonNull SongHolder holder, int position) {
         mCursor.moveToPosition(position);
         holder.title.setText(mCursor.getString(mColTitle));
 
